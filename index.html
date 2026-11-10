@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新手秒懂期权 · Options Made Simple for Beginners</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: #090e1a;
+      color: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      display: flex;
+      flex-direction: column;
+      padding: 12px 16px;
+      gap: 12px;
+    }
+
+    /* 1. 顶部通栏 */
+    .top-bar {
+      height: 62px;
+      flex-shrink: 0;
+      background: linear-gradient(90deg, #131d36 0%, #0f172a 100%);
+      border: 1.5px solid #283757;
+      border-radius: 14px;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .app-title {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      background: linear-gradient(90deg, #fde047 0%, #fbbf24 50%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+    }
+
+    .mode-group {
+      display: flex;
+      gap: 8px;
+      background: #070b14;
+      padding: 5px;
+      border-radius: 10px;
+      border: 1px solid #263554;
+    }
+
+    .mode-btn {
+      padding: 8px 18px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #94a3b8;
+      background: transparent;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .mode-btn.active {
+      background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(37, 99, 235, 0.45);
+    }
+
+    /* 2. 主体左右分栏 (50% : 50%) */
+    .workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: calc(50% - 7px) calc(50% - 7px);
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .left-column,
+    .right-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    /* 3. 左栏上部：2x2 策略矩阵（饱满无留白） */
+    .matrix-2x2 {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .strat-card {
+      background: #121b2f;
+      border: 2px solid #263656;
+      border-radius: 15px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      min-height: 0;
+    }
+
+    .strat-card:hover {
+      border-color: #475569;
+      background: #16223a;
+    }
+
+    .strat-card.active {
+      background: linear-gradient(160deg, #172752 0%, #0f1a36 100%);
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25), inset 0 0 20px rgba(56, 189, 248, 0.1);
+    }
+
+    .strat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .strat-title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .strat-icon {
+      font-size: 22px;
+    }
+
+    .strat-title {
+      font-size: 21px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .strat-pill {
+      font-size: 13px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+    }
+
+    .strat-card.active .strat-pill {
+      background: #0284c7;
+      color: #ffffff;
+      border-color: #7dd3fc;
+    }
+
+    /* 卡片中部：3个核心参数大框全高度拉伸 */
+    .strat-params {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      min-height: 0;
+    }
+
+    .param-cell {
+      background: #091020;
+      border: 1.5px solid #223150;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 6px 4px;
+    }
+
+    .strat-card.active .param-cell {
+      background: #0b1428;
+      border-color: #3b82f6;
+    }
+
+    .param-label {
+      font-size: 14px;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+
+    .param-value {
+      font-size: 26px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.1;
+    }
+
+    .c-yellow { color: #facc15 !important; }
+    .c-blue   { color: #38bdf8 !important; }
+    .c-red    { color: #fb7185 !important; }
+    .c-green  { color: #4ade80 !important; }
+
+    /* 卡片底部：完整显示行权买卖股票前提 */
+    .strat-footer {
+      flex-shrink: 0;
+      background: #0c1426;
+      border: 1px solid #243556;
+      border-radius: 9px;
+      padding: 7px 10px;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.38;
+      color: #e2e8f0;
+      text-align: left;
+    }
+
+    .strat-card.active .strat-footer {
+      background: rgba(14, 165, 233, 0.22);
+      border-color: #38bdf8;
+      color: #ffffff;
+    }
+
+    /* 4. 左栏下部：三步交割算账大框 */
+    .settlement-box {
+      flex-shrink: 0;
+      background: #121b2f;
+      border: 1.5px solid #283757;
+      border-radius: 15px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .settlement-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    .settlement-title {
+      color: #e2e8f0;
+      font-size: 16px;
+    }
+
+    .exercise-status {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 900;
+      background: #1e293b;
+      color: #facc15;
+      border: 1px solid #475569;
+    }
+
+    .equation-grid {
+      display: grid;
+      grid-template-columns: 1fr 24px 1.15fr 24px 1.15fr;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .eq-card {
+      background: #091020;
+      border: 1.5px solid #233252;
+      border-radius: 11px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .eq-card.result {
+      background: #162650;
+      border-color: #38bdf8;
+    }
+
+    .eq-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+
+    .eq-num {
+      font-size: 25px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .eq-sub {
+      font-size: 12px;
+      font-weight: 700;
+      color: #cbd5e1;
+      text-align: center;
+    }
+
+    .eq-sign {
+      font-size: 24px;
+      font-weight: 900;
+      color: #64748b;
+      text-align: center;
+    }
+
+    /* 5. 右栏：顶部4指标 + 压缩1:1折线图 + 紧贴图下的拖动条 + 秒懂账单 */
+    .summary-strip {
+      flex-shrink: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .sum-box {
+      background: #121b2f;
+      border: 1.5px solid #283757;
+      border-radius: 13px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+    }
+
+    .sum-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #94a3b8;
+    }
+
+    .sum-val {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    /* 折线图面板（压缩高度，1:1真实像素绝不拉伸） */
+    .chart-panel {
+      height: 285px;
+      flex-shrink: 0;
+      background: #121b2f;
+      border: 1.5px solid #283757;
+      border-radius: 15px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .chart-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chart-heading {
+      font-size: 17px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .legend-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chart-canvas {
+      flex: 1;
+      background: #091020;
+      border: 1px solid #223150;
+      border-radius: 10px;
+      width: 100%;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* 紧贴折线图正下方的滑块控制盒 */
+    .slider-panel {
+      flex-shrink: 0;
+      background: #121b2f;
+      border: 1.5px solid #38bdf8;
+      border-radius: 15px;
+      padding: 10px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .slider-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .slider-label {
+      font-size: 16px;
+      font-weight: 900;
+      color: #f8fafc;
+    }
+
+    .slider-readout {
+      font-size: 22px;
+      font-weight: 900;
+      color: #38bdf8;
+      background: #091020;
+      padding: 3px 14px;
+      border-radius: 8px;
+      border: 1px solid #38bdf8;
+    }
+
+    .range-slider {
+      width: 100%;
+      height: 10px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: linear-gradient(90deg, #f43f5e 0%, #64748b 50%, #10b981 100%);
+      border-radius: 999px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 4px solid #38bdf8;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+      cursor: grab;
+    }
+
+    .quick-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .quick-btn {
+      padding: 6px 4px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #e2e8f0;
+      background: #1b2845;
+      border: 1px solid #334770;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+
+    .quick-btn:hover {
+      background: #283a63;
+      border-color: #60a5fa;
+    }
+
+    /* 右下：你的期权账单 */
+    .story-panel {
+      flex: 1;
+      background: linear-gradient(135deg, #162650 0%, #0f172a 100%);
+      border: 1.5px solid #38bdf8;
+      border-radius: 15px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+      min-height: 0;
+    }
+
+    .story-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .story-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: #fde047;
+    }
+
+    .story-tag {
+      font-size: 13px;
+      font-weight: 900;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.2);
+      color: #7dd3fc;
+      border: 1px solid #38bdf8;
+      white-space: nowrap;
+    }
+
+    .story-content {
+      font-size: 15.5px;
+      font-weight: 700;
+      line-height: 1.48;
+      color: #f8fafc;
+    }
+
+    .story-content b {
+      color: #fde047;
+      font-weight: 900;
+    }
+
+    /* Layout only: keep all original content and interaction code unchanged. */
+    body {
+      height: auto;
+      min-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .top-bar { height: auto; min-height: 62px; gap: 12px; flex-wrap: wrap; padding: 10px 20px; }
+    .app-title { font-size: clamp(20px, 1.35vw, 26px); white-space: normal; }
+    .mode-group { flex-wrap: wrap; }
+    .mode-btn { font-size: 14px; padding: 8px 12px; }
+    .workspace {
+      flex: 1 0 auto;
+      min-height: max(760px, calc(100vh - 100px));
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: stretch;
+    }
+    .left-column, .right-column { min-width: 0; }
+    .matrix-2x2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(min-content, 1fr));
+    }
+    .strat-card { justify-content: flex-start; gap: 10px; min-width: 0; }
+    .strat-header { flex-wrap: wrap; gap: 6px 8px; }
+    .strat-title-group { min-width: 0; }
+    .strat-title { font-size: clamp(18px, 1.1vw, 21px); }
+    .strat-pill { padding: 3px 8px; font-size: 12px; }
+
+    /* The numbers are compact labels; the explanation gets the spare space. */
+    .strat-params { flex: 0 0 auto; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+    .param-cell { padding: 6px 3px; gap: 2px; border-radius: 8px; }
+    .param-label { font-size: 12px; line-height: 1.3; }
+    .param-value { font-size: 22px; line-height: 1.15; white-space: nowrap; }
+    .strat-footer {
+      flex: 1 0 auto;
+      min-height: 150px;
+      padding: 12px 14px;
+      font-size: clamp(21px, 1.4vw, 28px);
+      line-height: 1.55;
+      display: flex;
+      align-items: center;
+      overflow-wrap: anywhere;
+    }
+    .settlement-top { flex-wrap: wrap; gap: 8px; }
+    .exercise-status { white-space: normal; }
+    .equation-grid { grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1.15fr) 18px minmax(0, 1.15fr); gap: 4px; }
+    .eq-card { min-width: 0; padding: 8px 6px; }
+    .eq-sub { overflow-wrap: anywhere; }
+
+    /* Give the chart the flexible height; the bill only uses its content height. */
+    .chart-panel { height: auto; flex: 1 0 360px; min-height: 360px; }
+    .chart-header { flex-wrap: wrap; gap: 6px 12px; }
+    .chart-heading { min-width: 0; }
+    .legend-group { flex-wrap: wrap; gap: 8px 12px; }
+    .slider-panel { gap: 12px; padding: 12px 16px; }
+    .slider-top { flex-wrap: wrap; gap: 8px; }
+    .range-slider { margin: 5px 0; flex-shrink: 0; }
+    .story-panel { flex: 0 0 auto; justify-content: flex-start; padding: 12px 16px; gap: 8px; }
+    .story-header { flex-wrap: wrap; align-items: flex-start; }
+    .story-tag { white-space: normal; overflow-wrap: anywhere; }
+    .story-content { font-size: 16px; line-height: 1.6; overflow-wrap: anywhere; }
+    .summary-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+    .sum-box { min-width: 0; padding: 8px 5px; text-align: center; }
+    .sum-val { font-size: clamp(18px, 1.15vw, 22px); }
+
+    @media (max-width: 1100px) {
+      .workspace { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+      .matrix-2x2 { grid-template-rows: repeat(2, minmax(280px, 1fr)); }
+      .strat-footer { font-size: 24px; }
+      .chart-panel { flex: 0 0 auto; height: clamp(380px, 55vh, 660px); }
+    }
+    @media (max-width: 600px) {
+      body { padding: 10px; gap: 10px; }
+      .top-bar { padding: 12px; }
+      .mode-group { width: 100%; }
+      .mode-btn { flex: 1 1 180px; }
+      .matrix-2x2 { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+      .strat-footer { min-height: 140px; font-size: 22px; }
+      .summary-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .settlement-box { padding: 12px 10px; }
+      .eq-title { font-size: 12px; }
+      .eq-num { font-size: 21px; }
+      .eq-sub { font-size: 11px; }
+      .chart-panel { padding: 10px 6px; }
+      .quick-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+
+    /* Match the explanatory amounts to their parameter labels. */
+    :root { --cost-color: #c4b5fd; --label-size: clamp(16px, 1vw, 20px); }
+    .c-cost, #sumCostBasis, #eqTotalSub { color: var(--cost-color) !important; }
+    .description-copy { display: block; width: 100%; }
+    .description-copy .amount { font-weight: 900; }
+    .description-copy .amount:not(.c-cost), .description-copy .money { white-space: nowrap; }
+    .param-label, .sum-label, .legend-group { font-size: var(--label-size); line-height: 1.3; }
+    .param-value, .sum-val { font-size: clamp(22px, 1.25vw, 26px); }
+    .param-cell { gap: 3px; padding: 7px 3px; }
+    .chart-heading { font-size: clamp(18px, 1.1vw, 22px); }
+    .legend-group { gap: 8px 14px; }
+    .chart-header { gap: 10px 14px; }
+    .workspace { flex: 0 0 auto; min-height: max(760px, calc(100vh - 160px)); }
+    .chart-panel { min-height: 360px; }
+    @media (max-width: 1100px) {
+      .workspace { min-height: 0; }
+      .chart-panel { height: clamp(360px, 49vh, 590px); }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- 顶部通栏 -->
+  <header class="top-bar">
+    <div class="app-title">👑 新手秒懂期权 · Options Made Simple for Beginners</div>
+    <div class="mode-group">
+      <button id="btnModeStock" class="mode-btn active" onclick="switchMode(true)">模式一：手里有 1 股股票 (100元)</button>
+      <button id="btnModePure" class="mode-btn" onclick="switchMode(false)">模式二：手里没股票 (纯期权)</button>
+    </div>
+  </header>
+
+  <!-- 主工作区 -->
+  <main class="workspace">
+
+    <!-- 左栏：2x2 策略矩阵 + 三步交割算账 -->
+    <section class="left-column">
+      <div class="matrix-2x2">
+
+        <!-- 左上：Long Call -->
+        <div id="card-long_call" class="strat-card" onclick="selectStrategy('long_call')">
+          <div class="strat-header">
+            <div class="strat-title-group">
+              <span class="strat-icon">🚀</span>
+              <span id="title-long_call" class="strat-title">持股 + Long Call</span>
+            </div>
+            <span class="strat-pill">买入看涨</span>
+          </div>
+          <div class="strat-params">
+            <div class="param-cell">
+              <span class="param-label">当前股价</span>
+              <span class="param-value">100元</span>
+            </div>
+            <div class="param-cell">
+              <span class="param-label">行权价</span>
+              <span class="param-value c-yellow">120元</span>
+            </div>
+            <div class="param-cell">
+              <span class="param-label">权利金</span>
+              <span class="param-value c-red">付5元</span>
+            </div>
+          </div>
+          <div id="desc-long_call" class="strat-footer">
+            花5元买看涨权(含权利金买股成本125元)：涨破120元后行使按120元再买1股权利，手里变2股双倍赚钱
+          </div>
+        </div>
+
+        <!-- 右上：Short Call -->
+        <div id="card-short_call" class="strat-card" onclick="selectStrategy('short_call')">
+          <div class="strat-header">
+            <div class="strat-title-group">
+              <span class="strat-icon">🏠</span>
+              <span id="title-short_call" class="strat-title">持股 + Short Call</span>
+            </div>
+            <span class="strat-pill">卖出看涨(收租)</span>
+          </div>
+          <div class="strat-params">
+            <div class="param-cell">
+              <span class="param-label">当前股价</span>
+              <span class="param-value">100元</span>
+            </div>
+            <div class="param-cell">
+              <span class="param-label">行权价</span>
+              <span class="param-value c-yellow">120元</span>
+            </div>
+            <div class="param-cell">
+              <span class="param-label">权利金</span>
+              <span class="param-value c-green">收5元</span>
+            </div>
+          </div>
+          <div id="desc-short_call" class="strat-footer">
+            收5元权利金(含权利金成本降至95元)：若涨破120元，必须履行按120元卖出手里股票的义务(封顶赚25元)
+          </div>
+        </div>
+
+        <!-- 左下：Long Put (默认选中) -->
+        <div id="card-long_put" class="strat-card active" onclick="selectStrategy('long_put')">
+          <div class="strat-header">
+            <div class="strat-title-group">
+              <span class="strat-icon">🛡️</span>
+              <span id="title-long_put" class="strat-title">持股 + Long Put</span>
+            </div>
+            <span class="strat-pill">买入看跌(买保险)</span>
+          </div>
+          <div class="strat-params">
+            <div class="param-cell">
+              <span class="param-label">当前股价</span>
+              <span class="param-value">100元</span>
+            </div>
+            <div class="param-cell">
+              <span class="param-label">行权价</span>
+              <span class="param-value c-blue">80元</span>
+            </div>
+            <div class="param-cell">
+              <span class="param-label">权利金</span>
+              <span class="param-value c-red">付5元</span>
+            </div>
+          </div>
+          <div id="desc-long_put" class="strat-footer">
+            花5元买看跌权(含权利金总成本105元)：若跌破80元，行使按80元卖出手里股票的权利，锁定最多亏25元
+          </div>
+        </div>
+
+        <!-- 右下：Short Put -->
+        <div id="card-short_put" class="strat-card" onclick="selectStrategy('short_put')">
+          <div class="strat-header">
+            <div class="strat-title-group">
+              <span class="strat-icon">🛒</span>
+              <span id="title-short_put" class="strat-title">持股 + Short Put</span>
+            </div>
+            <span class="strat-pill">卖出看跌(接盘)</span>
+          </div>
+          <div class="strat-params">
+            <div class="param-cell">
+              <span class="param-label">当前股价</span>
+              <span class="param-value">100元</span>
+            </div>
+            <div class="param-cell">
+              <span class="param-label">行权价</span>
+              <span class="param-value c-blue">80元</span>
+            </div>
+            <div class="param-cell">
+              <span class="param-label">权利金</span>
+              <span class="param-value c-green">收5元</span>
+            </div>
+          </div>
+          <div id="desc-short_put" class="strat-footer">
+            收5元权利金(含权利金成本95元)：若跌破80元，必须履行按80元再买进1股的义务，手里变2股双倍承担跌幅
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 左下：到期行权买股/卖股三步算账明细 -->
+      <div class="settlement-box">
+        <div class="settlement-top">
+          <span class="settlement-title">🧮 到期行权买股 / 卖股交割算账明细：</span>
+          <span id="exerciseBadge" class="exercise-status">✅ 已触发行权：行使按 80元 卖出股票权利</span>
+        </div>
+        <div class="equation-grid">
+          <div class="eq-card">
+            <span id="eqStockTitle" class="eq-title">手里股票本身盈亏</span>
+            <span id="eqStockNum" class="eq-num c-red">-50 元</span>
+            <span id="eqStockSub" class="eq-sub">到期市价50 - 初始100</span>
+          </div>
+          <div class="eq-sign">+</div>
+          <div class="eq-card">
+            <span class="eq-title">期权行权交割盈亏</span>
+            <span id="eqOptNum" class="eq-num c-green">+25 元</span>
+            <span id="eqOptSub" class="eq-sub">按80卖股差价+30 / 权利金-5</span>
+          </div>
+          <div class="eq-sign">=</div>
+          <div class="eq-card result">
+            <span class="eq-title">最终到手总净利</span>
+            <span id="eqTotalNum" class="eq-num c-red">-25 元</span>
+            <span id="eqTotalSub" class="eq-sub">含权利金成本价 105元</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 右栏：4指标 + 压缩无变形折线图 + 折线图正下方拖动条 + 你的期权账单 -->
+    <section class="right-column">
+
+      <div class="summary-strip">
+        <div class="sum-box">
+          <span class="sum-label">含权利金成本价</span>
+          <span id="sumCostBasis" class="sum-val c-yellow">105 元</span>
+        </div>
+        <div class="sum-box">
+          <span class="sum-label">最大收益天花板</span>
+          <span id="sumMaxGain" class="sum-val c-green">上不封顶 ∞</span>
+        </div>
+        <div class="sum-box">
+          <span class="sum-label">最大亏损铁底</span>
+          <span id="sumMaxLoss" class="sum-val c-red">-25 元</span>
+        </div>
+        <div class="sum-box">
+          <span class="sum-label">当前到期净损益</span>
+          <span id="sumCurrentPnl" class="sum-val c-red">-25 元</span>
+        </div>
+      </div>
+
+      <!-- 压缩高度、1:1真实像素比例的折线图 -->
+      <div class="chart-panel">
+        <div class="chart-header">
+          <span id="chartTitle" class="chart-heading">📊 持股 + Long Put（买保险策略）到期损益折线图</span>
+          <div class="legend-group">
+            <div id="legendStockOnly" class="legend-item">
+              <span style="display:inline-block;width:20px;height:0;border-top:2.5px dashed #94a3b8;"></span>
+              <span style="color:#94a3b8;">只拿股票裸奔</span>
+            </div>
+            <div class="legend-item">
+              <span style="display:inline-block;width:20px;height:4px;background:#38bdf8;border-radius:2px;"></span>
+              <span id="legendActiveName" style="color:#38bdf8;">股票 + 期权组合</span>
+            </div>
+          </div>
+        </div>
+        <div id="chartBox" class="chart-canvas">
+          <svg id="payoffSvg"></svg>
+        </div>
+      </div>
+
+      <!-- 紧贴在折线图正下方的滑块控制区 -->
+      <div class="slider-panel">
+        <div class="slider-top">
+          <span class="slider-label">👉 左右拖动滑块，模拟到期时的股价 (S_T)：</span>
+          <span id="priceReadout" class="slider-readout">到期股价：50 元</span>
+        </div>
+        <input id="priceSlider" type="range" min="40" max="160" step="1" value="50" class="range-slider" oninput="setPrice(this.value)">
+        <div class="quick-row">
+          <button class="quick-btn" onclick="setPrice(50)">💥 暴跌到 50</button>
+          <button class="quick-btn" onclick="setPrice(75)">🛡️ 跌破成本 75</button>
+          <button class="quick-btn" onclick="setPrice(100)">😐 原地不动 100</button>
+          <button class="quick-btn" onclick="setPrice(125)">⚖️ 突破成本 125</button>
+          <button class="quick-btn" onclick="setPrice(150)">🚀 大涨到 150</button>
+        </div>
+      </div>
+
+      <!-- 右下：白话秒懂账单 -->
+      <div class="story-panel">
+        <div class="story-header">
+          <span id="storyTitle" class="story-title">💡 你的期权账单（当到期股价为 50 元时）：</span>
+          <span id="storyTag" class="story-tag">🛡️ 行使80元卖股权利</span>
+        </div>
+        <div id="storyText" class="story-content"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    let hasStock = true;
+    let activeStrategy = 'long_put';
+    let currentST = 50;
+
+    const S0 = 100;
+    const K_CALL = 120;
+    const K_PUT = 80;
+    const PREMIUM = 5;
+
+    function calcOptionPayoff(strat, st) {
+      if (strat === 'long_call')  return Math.max(st - K_CALL, 0) - PREMIUM;
+      if (strat === 'short_call') return -Math.max(st - K_CALL, 0) + PREMIUM;
+      if (strat === 'long_put')   return Math.max(K_PUT - st, 0) - PREMIUM;
+      if (strat === 'short_put')  return -Math.max(K_PUT - st, 0) + PREMIUM;
+      return 0;
+    }
+
+    function calcTotalPayoff(strat, withStock, st) {
+      const stockPart = withStock ? (st - S0) : 0;
+      return stockPart + calcOptionPayoff(strat, st);
+    }
+
+    function fmtMoney(v) {
+      return (v > 0 ? '+' : '') + v + ' 元';
+    }
+
+    // Only add inline styling: retain every character of the original wording.
+    function renderColoredDescription(element, text) {
+      const copy = document.createElement('span');
+      copy.className = 'description-copy';
+      const tokens = /含权利金[^()：:，。；]*?\d+元|(?:花|付|收)5元|120元|80元|100元|(?:赚|亏)25元/g;
+      let offset = 0;
+      for (const match of text.matchAll(tokens)) {
+        copy.append(document.createTextNode(text.slice(offset, match.index)));
+        const mark = document.createElement('span');
+        const value = match[0];
+        const color = value.startsWith('含权利金') ? 'c-cost'
+          : value === '120元' ? 'c-yellow'
+          : value === '80元' ? 'c-blue'
+          : value === '100元' ? ''
+          : value.startsWith('收') || value.startsWith('赚') ? 'c-green' : 'c-red';
+        mark.className = 'amount ' + color;
+        if (color === 'c-cost') {
+          const numberAt = value.search(/\d/);
+          mark.append(document.createTextNode(value.slice(0, numberAt)));
+          const money = document.createElement('span');
+          money.className = 'money';
+          money.textContent = value.slice(numberAt);
+          mark.append(money);
+        } else {
+          mark.textContent = value;
+        }
+        copy.append(mark);
+        offset = match.index + value.length;
+      }
+      copy.append(document.createTextNode(text.slice(offset)));
+      element.replaceChildren(copy);
+    }
+
+    function switchMode(withStock) {
+      hasStock = withStock;
+      document.getElementById('btnModeStock').classList.toggle('active', withStock);
+      document.getElementById('btnModePure').classList.toggle('active', !withStock);
+      document.getElementById('legendStockOnly').style.display = withStock ? 'flex' : 'none';
+      document.getElementById('legendActiveName').textContent = withStock ? '股票 + 期权组合' : '纯期权到期损益';
+
+      const cardTitles = {
+        long_call:  withStock ? '持股 + Long Call'  : '纯 Long Call',
+        short_call: withStock ? '持股 + Short Call' : '纯 Short Call',
+        long_put:   withStock ? '持股 + Long Put'   : '纯 Long Put',
+        short_put:  withStock ? '持股 + Short Put'  : '纯 Short Put'
+      };
+
+      // 8种情况全部明确写出“触发行权价后行使买股/卖股权利（或履行买卖义务）”的前提
+      const cardDescs = {
+        long_call: withStock
+          ? '花5元买看涨权(含权利金买股成本125元)：涨破120元后行使按120元再买1股权利，手里变2股双倍赚钱'
+          : '花5元买看涨权(含权利金买股成本125元)：涨破120元后行使按120元买入股票权利，再按市价卖出赚差价',
+        short_call: withStock
+          ? '收5元权利金(含权利金成本降至95元)：若涨破120元，必须履行按120元卖出手里股票的义务(封顶赚25元)'
+          : '收5元权利金(含权利金临界价125元)：若涨破120元，必须按高市价买股票、再履行按120元低价卖给对方的义务',
+        long_put: withStock
+          ? '花5元买看跌权(含权利金总成本105元)：若跌破80元，行使按80元卖出手里股票的权利，锁定最多亏25元'
+          : '花5元买看跌权(含权利金保底价75元)：跌破80元后按低市价买股票、再行使按80元高价卖给对方的权利赚差价',
+        short_put: withStock
+          ? '收5元权利金(含权利金成本95元)：若跌破80元，必须履行按80元再买进1股的义务，手里变2股双倍承担跌幅'
+          : '收5元权利金(含权利金接盘成本75元)：若跌破80元，必须履行按80元高价买入对方股票接盘的义务'
+      };
+
+      ['long_call', 'short_call', 'long_put', 'short_put'].forEach(key => {
+        document.getElementById('title-' + key).textContent = cardTitles[key];
+        renderColoredDescription(document.getElementById('desc-' + key), cardDescs[key]);
+      });
+
+      updateAll();
+    }
+
+    function selectStrategy(strat) {
+      activeStrategy = strat;
+      ['long_call', 'short_call', 'long_put', 'short_put'].forEach(key => {
+        document.getElementById('card-' + key).classList.toggle('active', key === strat);
+      });
+      updateAll();
+    }
+
+    function setPrice(val) {
+      currentST = Number(val);
+      document.getElementById('priceSlider').value = currentST;
+      updateAll();
+    }
+
+    function getMetaInfo() {
+      if (hasStock) {
+        if (activeStrategy === 'long_call') {
+          return { title: '持股 + Long Call（行权加买1股双倍看涨）', costBasis: 105, optCostBasis: 125, mg: '双倍加速 ∞', ml: '-105 元', k: 120 };
+        }
+        if (activeStrategy === 'short_call') {
+          return { title: '持股 + Short Call（备兑看涨收租）', costBasis: 95, optCostBasis: 125, mg: '+25 元(封顶)', ml: '-95 元', k: 120 };
+        }
+        if (activeStrategy === 'long_put') {
+          return { title: '持股 + Long Put（行权按80元保底卖股）', costBasis: 105, optCostBasis: 75, mg: '上不封顶 ∞', ml: '-25 元(铁底)', k: 80 };
+        }
+        if (activeStrategy === 'short_put') {
+          return { title: '持股 + Short Put（跌破80被迫再买1股）', costBasis: 95, optCostBasis: 75, mg: '上不封顶 ∞', ml: '-175 元', k: 80 };
+        }
+      } else {
+        if (activeStrategy === 'long_call') {
+          return { title: '纯 Long Call（行使120元买股权利）', costBasis: 125, optCostBasis: 125, mg: '上不封顶 ∞', ml: '-5 元(仅亏权利金)', k: 120 };
+        }
+        if (activeStrategy === 'short_call') {
+          return { title: '纯 Short Call（履行120元卖股义务）', costBasis: 125, optCostBasis: 125, mg: '+5 元(仅赚权利金)', ml: '亏损无底洞 ∞', k: 120 };
+        }
+        if (activeStrategy === 'long_put') {
+          return { title: '纯 Long Put（行使80元卖股权利）', costBasis: 75, optCostBasis: 75, mg: '+75 元', ml: '-5 元(仅亏权利金)', k: 80 };
+        }
+        if (activeStrategy === 'short_put') {
+          return { title: '纯 Short Put（履行80元买股接盘义务）', costBasis: 75, optCostBasis: 75, mg: '+5 元(仅赚权利金)', ml: '-75 元', k: 80 };
+        }
+      }
+    }
+
+    function getExerciseActionText(st) {
+      if (activeStrategy === 'long_call') {
+        return st > 120
+          ? `✅ 已触发行权：行使按 120元 买入1股权利（市价${st}元）`
+          : `⏸️ 未涨破120元：放弃行使120元买股权利，仅付5元权利金`;
+      }
+      if (activeStrategy === 'short_call') {
+        return st > 120
+          ? `⚠️ 被迫履约交割：必须履行按 120元 卖出1股股票的义务`
+          : `✅ 未涨破120元：对方放弃买股行权，白收5元权利金`;
+      }
+      if (activeStrategy === 'long_put') {
+        return st < 80
+          ? `✅ 已触发行权：行使按 80元 高价卖出1股股票的权利`
+          : `⏸️ 未跌破80元：放弃行使80元卖股权利，仅付5元权利金`;
+      }
+      return st < 80
+        ? `⚠️ 被迫履约接盘：必须履行按 80元 买入1股股票的义务`
+        : `✅ 未跌破80元：对方放弃卖股行权，白收5元权利金`;
+    }
+
+    function buildStory(stockPnl, optPnl, totalPnl, meta) {
+      const st = currentST;
+      if (hasStock && activeStrategy === 'long_put') {
+        if (st < 80) {
+          return {
+            tag: `🛡️ 行使80元卖股权利 | 含权利金成本价 105元`,
+            text: `当股价跌到 <b>${st}元</b>（跌破80元）：你<b>正式行使按 80 元卖出手里股票的权利</b>！原本100元买的股票按80元交割卖出只亏 -20元，加上最初付的 -5元权利金（<b>含权利金总成本价 105元</b>），无论跌到多低，总亏损死死锁定在 <b>-25元铁底</b>！`
+          };
+        }
+        return {
+          tag: `🚀 放弃80元卖股权利 | 含权利金成本价 105元`,
+          text: `当股价为 <b>${st}元</b>（未跌破80元）：市价比80元更高，你<b>放弃行使按80元低价卖股的权利</b>，仅损失 -5元权利金（把100元持股成本抬高至<b>含权利金成本价 105元</b>）。手里股票盈亏 <b>${fmtMoney(stockPnl)}</b>，扣去5元权利金后净损益为 <b>${fmtMoney(totalPnl)}</b>。`
+        };
+      }
+
+      if (hasStock && activeStrategy === 'short_call') {
+        if (st > 120) {
+          return {
+            tag: `🏠 履行120元卖股义务 | 含权利金成本价 95元`,
+            text: `当股价涨到 <b>${st}元</b>（涨破120元）：买方要求行权，你<b>必须履行义务把手里的股票按 120 元卖给对方</b>！股票100元买、120元卖出赚 +20元，加上收的 +5元权利金（<b>含权利金成本价 95元</b>），封顶稳赚 <b>+25元</b>。`
+          };
+        }
+        return {
+          tag: `💰 无需卖股交割 | 含权利金成本价降至 95元`,
+          text: `当股价为 <b>${st}元</b>（未涨破120元）：对方放弃按120元买股，你无需卖出股票，白赚 <b>+5元权利金</b>（把100元持股成本降至<b>含权利金成本价 95元</b>），加上手里股票盈亏 <b>${fmtMoney(stockPnl)}</b>，总净利 <b>${fmtMoney(totalPnl)}</b>。`
+        };
+      }
+
+      if (hasStock && activeStrategy === 'long_call') {
+        if (st > 120) {
+          return {
+            tag: `⚡ 行使120元再买1股权利 | 第2股含权利金成本125元`,
+            text: `当股价冲到 <b>${st}元</b>（涨破120元）：你<b>行使权利按 120 元再买进第 2 股股票</b>（算上5元权利金，第2股<b>含权利金买股成本价为 125元</b>），转手按市价 ${st}元卖出净赚 <b>${fmtMoney(optPnl)}</b>；加上手里原有第1股赚的 <b>+${stockPnl}元</b>，两股合计双倍赚 <b>${fmtMoney(totalPnl)}</b>！`
+          };
+        }
+        return {
+          tag: `🎟️ 放弃120元买股权利 | 含权利金总成本价 105元`,
+          text: `当股价为 <b>${st}元</b>（未涨破120元）：市价低于120元，你<b>放弃行使按120元买第2股的权利</b>，期权仅亏 -5元权利金（<b>含权利金总成本价 105元</b>）；叠加手里原有1股盈亏 <b>${fmtMoney(stockPnl)}</b>，最终合计 <b>${fmtMoney(totalPnl)}</b>。`
+        };
+      }
+
+      if (hasStock && activeStrategy === 'short_put') {
+        if (st < 80) {
+          return {
+            tag: `💣 履行80元再买1股义务 | 第2股含权利金成本75元`,
+            text: `当股价暴跌到 <b>${st}元</b>（跌破80元）：对方行使卖权，你<b>必须履行义务按 80 元高价再买进第 2 股股票接盘</b>（扣去收的5元权利金，第2股<b>含权利金接盘成本价为 75元</b>，按现价${st}元亏 <b>${optPnl}元</b>）；加上原有第1股亏 <b>${stockPnl}元</b>，手里2股合计亏 <b>${totalPnl}元</b>！`
+          };
+        }
+        return {
+          tag: `🏦 无需买股接盘 | 含权利金成本价降至 95元`,
+          text: `当股价为 <b>${st}元</b>（未跌破80元）：对方不会按80元把股票卖给你，无需买进第2股。你白收 <b>+5元权利金</b>（把原有持股成本降至<b>含权利金成本价 95元</b>），合计净损益 <b>${fmtMoney(totalPnl)}</b>。`
+        };
+      }
+
+      // 模式二：纯期权（手里没股票）
+      if (activeStrategy === 'long_call') {
+        return st > 120
+          ? {
+              tag: `🎯 行使120元买股权利 | 含权利金买股成本价 125元`,
+              text: `到期股价涨到 <b>${st}元</b>（涨破120元）：你<b>行使权利按 120 元买入 1 股股票</b>，加上当初付的 5 元权利金，你的<b>含权利金买股成本价是 125 元</b>；随后按市场价 <b>${st}元</b> 卖出该股票，净损益为 <b>${fmtMoney(totalPnl)}</b>！`
+            }
+          : {
+              tag: `🛡️ 放弃120元买股权利 | 含权利金买股成本价 125元`,
+              text: `到期股价 <b>${st}元</b>（未涨破120元）：市价比120元还低，你<b>直接放弃行使按120元买股票的权利</b>，不发生股票买卖，最多只亏掉最初付的 <b>-5元权利金</b>。`
+            };
+      }
+
+      if (activeStrategy === 'short_call') {
+        return st > 120
+          ? {
+              tag: `🔥 被迫按${st}元买股再按120元卖出 | 含权利金成本125元`,
+              text: `到期股价涨到 <b>${st}元</b>（涨破120元）：买方要求行权，手里没股票的你<b>必须先按 ${st} 元市价买进 1 股股票，再履行义务按 120 元卖给对方</b>（抵扣5元权利金后<b>含权利金临界价 125元</b>），净亏 <b>${totalPnl}元</b>！`
+            }
+          : {
+              tag: `💰 对方放弃买股行权 | 含权利金临界成本价 125元`,
+              text: `到期股价 <b>${st}元</b>（未涨破120元）：买方放弃按120元买股，你无需买卖股票交割，白赚 <b>+5元权利金</b>。`
+            };
+      }
+
+      if (activeStrategy === 'long_put') {
+        return st < 80
+          ? {
+              tag: `📉 按${st}元买股再行使80元卖股权利 | 含权利金成本75元`,
+              text: `到期股价跌到 <b>${st}元</b>（跌破80元）：你先在市场上<b>按 ${st} 元低价买进 1 股股票，再行使期权权利按 80 元高价卖给对方</b>赚取差价 +${80 - st}元；扣掉5元权利金（<b>含权利金保底成本价 75元</b>），到手净赚 <b>${fmtMoney(totalPnl)}</b>！`
+            }
+          : {
+              tag: `🛡️ 放弃80元卖股权利 | 含权利金保底成本价 75元`,
+              text: `到期股价 <b>${st}元</b>（未跌破80元）：市价高于80元，你<b>放弃行使按80元卖出股票的权利</b>，最多只亏掉 <b>-5元权利金</b>。`
+            };
+      }
+
+      return st < 80
+        ? {
+            tag: `🛒 履行80元买股接盘义务 | 含权利金接盘成本价 75元`,
+            text: `到期股价跌到 <b>${st}元</b>（跌破80元）：对方要求行权，你<b>必须履行义务拿出 80 元高价买入对方抛售的 1 股股票</b>；抵去最初收的5元权利金后，你的<b>含权利金接盘成本价为 75 元</b>，按市价 ${st}元核算净亏 <b>${totalPnl}元</b>！`
+          }
+        : {
+            tag: `🏦 对方放弃卖股行权 | 含权利金接盘成本价 75元`,
+            text: `到期股价 <b>${st}元</b>（未跌破80元）：对方不会按80元低价卖股给你，无需买股接盘，稳赚 <b>+5元权利金</b>。`
+          };
+    }
+
+    function drawChart(meta) {
+      const box = document.getElementById('chartBox');
+      const svg = document.getElementById('payoffSvg');
+      const W = Math.max(box.clientWidth || 760, 320);
+      const H = Math.max(box.clientHeight || 225, 180);
+
+      // 1:1 真实像素映射，彻底杜绝文字与数字纵向拉伸变形
+      svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+      const axisSize = W < 600 ? 14 : W < 800 ? 16 : 20;
+      const noteSize = W < 600 ? 14 : W < 800 ? 16 : 18;
+      const noteHeight = noteSize + 14;
+      const padL = axisSize * 3.8, padR = 30, padT = 30, padB = axisSize * 2.8 + 12;
+      const costColor = '#c4b5fd';
+      const kColor = meta.k === K_PUT ? '#38bdf8' : '#facc15';
+      const textWidth = text => [...text].reduce((width, char) => width + (char.charCodeAt(0) > 255 ? noteSize : noteSize * 0.62), 0) + 24;
+      const clampLabelX = (center, width) => Math.max(padL + 2, Math.min(center - width / 2, W - padR - width - 2));
+      const plotW = W - padL - padR;
+      const plotH = H - padT - padB;
+
+      const minX = 40, maxX = 160;
+      const minY = -95, maxY = 95;
+
+      const toX = x => padL + ((x - minX) / (maxX - minX)) * plotW;
+      const toY = y => {
+        const clamped = Math.max(minY, Math.min(maxY, y));
+        return padT + ((maxY - clamped) / (maxY - minY)) * plotH;
+      };
+
+      const zeroY = toY(0);
+      let html = '';
+
+      // 盈亏背景区
+      html += `<rect x="${padL}" y="${padT}" width="${plotW}" height="${zeroY - padT}" fill="rgba(16, 185, 129, 0.08)" />`;
+      html += `<rect x="${padL}" y="${zeroY}" width="${plotW}" height="${H - padB - zeroY}" fill="rgba(239, 68, 68, 0.08)" />`;
+
+      // 水平网格线
+      [-75, -50, -25, 0, 25, 50, 75].forEach(val => {
+        const y = toY(val);
+        const isZero = val === 0;
+        const col = val > 0 ? '#4ade80' : val < 0 ? '#fb7185' : '#f8fafc';
+        html += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="${isZero ? '#94a3b8' : '#1e293b'}" stroke-width="${isZero ? 2 : 1}" />`;
+        html += `<text x="${padL - 8}" y="${y + axisSize * 0.35}" text-anchor="end" fill="${col}" font-size="${axisSize}" font-weight="800">${val > 0 ? '+' + val : val}元</text>`;
+      });
+
+      // 垂直网格线与横轴价格
+      [50, 80, 100, 120, 150].forEach(p => {
+        const x = toX(p);
+        const isK = (p === 80 || p === 120);
+        const label = p === 80 ? '80元(Put行权)' : p === 100 ? '100元(现价)' : p === 120 ? '120元(Call行权)' : p + '元';
+        const col = p === 80 ? '#38bdf8' : p === 120 ? '#facc15' : p === 100 ? '#ffffff' : '#94a3b8';
+        html += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${H - padB}" stroke="${isK ? '#334155' : '#1e293b'}" stroke-width="1.2" stroke-dasharray="4,4" />`;
+        const split = label.indexOf('(');
+        const labelMarkup = split < 0 ? label : `<tspan x="${x}">${label.slice(0, split)}</tspan><tspan x="${x}" dy="1.2em">${label.slice(split)}</tspan>`;
+        html += `<text x="${x}" y="${H - padB + axisSize + 8}" text-anchor="middle" fill="${col}" font-size="${axisSize}" font-weight="800">${labelMarkup}</text>`;
+      });
+
+      // 只拿股票裸奔虚线
+      if (hasStock) {
+        let stockPts = [];
+        for (let s = minX; s <= maxX; s += 2) {
+          stockPts.push(`${toX(s)},${toY(s - S0)}`);
+        }
+        html += `<polyline points="${stockPts.join(' ')}" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-dasharray="6,5" />`;
+      }
+
+      // 策略损益实线
+      let stratPts = [];
+      for (let s = minX; s <= maxX; s += 1) {
+        stratPts.push(`${toX(s)},${toY(calcTotalPayoff(activeStrategy, hasStock, s))}`);
+      }
+      html += `<polyline points="${stratPts.join(' ')}" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />`;
+
+      // Larger labels use the same semantic colors as the strategy cards.
+      const beX = toX(meta.costBasis);
+      const costText = `含权利金成本价 ${meta.costBasis}元`;
+      const costWidth = textWidth(costText);
+      const costX = clampLabelX(beX, costWidth);
+      const costY = zeroY - noteHeight - 12;
+      html += `<circle cx="${beX}" cy="${zeroY}" r="5.5" fill="${costColor}" stroke="#090e1a" stroke-width="2" />`;
+      html += `<rect x="${costX}" y="${costY}" width="${costWidth}" height="${noteHeight}" rx="6" fill="#0f172a" stroke="${costColor}" stroke-width="1.2" />`;
+      html += `<text x="${costX + costWidth / 2}" y="${costY + noteSize + 5}" text-anchor="middle" fill="${costColor}" font-size="${noteSize}" font-weight="900">${costText}</text>`;
+
+      const kX = toX(meta.k);
+      const kPnl = calcTotalPayoff(activeStrategy, hasStock, meta.k);
+      const kY = toY(kPnl);
+      const kText = `行权拐点 K=${meta.k}元`;
+      const kWidth = textWidth(kText);
+      const kBoxX = clampLabelX(kX, kWidth);
+      const kBoxY = kY + noteHeight + 14 < H - padB ? kY + 10 : kY - noteHeight - 10;
+      html += `<circle cx="${kX}" cy="${kY}" r="6" fill="${kColor}" stroke="#090e1a" stroke-width="2" />`;
+      html += `<rect x="${kBoxX}" y="${kBoxY}" width="${kWidth}" height="${noteHeight}" rx="6" fill="#0f172a" stroke="${kColor}" stroke-width="1.2" />`;
+      html += `<text x="${kBoxX + kWidth / 2}" y="${kBoxY + noteSize + 5}" text-anchor="middle" fill="${kColor}" font-size="${noteSize}" font-weight="900">${kText}</text>`;
+
+      // 拖动轴竖线与“含权利金成本价”浮标（修正原“股价XX”标识）
+      const curX = toX(currentST);
+      const curPnl = calcTotalPayoff(activeStrategy, hasStock, currentST);
+      const curY = toY(curPnl);
+      const dotCol = curPnl > 0 ? '#4ade80' : curPnl < 0 ? '#fb7185' : '#cbd5e1';
+
+      html += `<line x1="${curX}" y1="${padT}" x2="${curX}" y2="${H - padB}" stroke="#f8fafc" stroke-width="1.8" stroke-dasharray="4,4" />`;
+
+      if (hasStock) {
+        const rawY = toY(currentST - S0);
+        html += `<circle cx="${curX}" cy="${rawY}" r="4.5" fill="#94a3b8" stroke="#090e1a" stroke-width="1.5" />`;
+      }
+
+      html += `<circle cx="${curX}" cy="${curY}" r="8" fill="${dotCol}" stroke="#ffffff" stroke-width="2.5" />`;
+
+      const badgeCostText = `含权利金成本价 ${meta.costBasis}元`;
+      const badgePnlText = ` | 净损益 ${fmtMoney(curPnl)}`;
+      const wrapBadge = textWidth(badgeCostText + badgePnlText) > W - padL - padR - 8;
+      const badgeW = wrapBadge ? Math.max(textWidth(badgeCostText), textWidth(badgePnlText)) : textWidth(badgeCostText + badgePnlText);
+      const badgeH = wrapBadge ? noteHeight + noteSize * 1.2 : noteHeight;
+      const badgeX = Math.min(Math.max(curX - badgeW / 2, padL + 4), W - padR - badgeW - 4);
+      const candidates = [curY - badgeH - 10, curY + 12];
+      for (let y = padT + 4; y + badgeH < H - padB; y += badgeH + 8) candidates.push(y);
+      const occupied = [{x: costX, y: costY, w: costWidth, h: noteHeight}, {x: kBoxX, y: kBoxY, w: kWidth, h: noteHeight}];
+      const clear = y => y >= padT && y + badgeH <= H - padB && occupied.every(r =>
+        badgeX + badgeW + 5 < r.x || badgeX > r.x + r.w + 5 || y + badgeH + 5 < r.y || y > r.y + r.h + 5);
+      const badgeY = candidates.find(clear) ?? Math.max(padT, Math.min(curY - badgeH - 10, H - padB - badgeH));
+
+      html += `<rect x="${badgeX}" y="${badgeY}" width="${badgeW}" height="${badgeH}" rx="7" fill="#0f172a" stroke="${dotCol}" stroke-width="2" />`;
+      html += `<text x="${badgeX + badgeW / 2}" y="${badgeY + noteSize + 5}" text-anchor="middle" fill="${dotCol}" font-size="${noteSize}" font-weight="900"><tspan fill="${costColor}">${badgeCostText}</tspan><tspan ${wrapBadge ? `x="${badgeX + badgeW / 2}" dy="1.2em"` : ""}>${badgePnlText}</tspan></text>`;
+
+      svg.innerHTML = html;
+    }
+
+    function updateAll() {
+      const stockPnl = hasStock ? (currentST - S0) : 0;
+      const optPnl   = calcOptionPayoff(activeStrategy, currentST);
+      const totalPnl = stockPnl + optPnl;
+      const meta     = getMetaInfo();
+
+      document.getElementById('priceReadout').textContent = `到期股价：${currentST} 元`;
+      document.getElementById('exerciseBadge').textContent = getExerciseActionText(currentST);
+
+      // 1. 股票本身盈亏
+      const elStockTitle = document.getElementById('eqStockTitle');
+      const elStockNum   = document.getElementById('eqStockNum');
+      const elStockSub   = document.getElementById('eqStockSub');
+
+      if (hasStock) {
+        elStockTitle.textContent = '手里股票本身盈亏';
+        elStockNum.textContent   = fmtMoney(stockPnl);
+        elStockNum.className     = 'eq-num ' + (stockPnl > 0 ? 'c-green' : stockPnl < 0 ? 'c-red' : '');
+        elStockSub.textContent   = `到期市价${currentST} - 初始成本100`;
+      } else {
+        elStockTitle.textContent = '手里未持有原股票';
+        elStockNum.textContent   = '0 元';
+        elStockNum.className     = 'eq-num';
+        elStockSub.textContent   = '纯期权行权买股/卖股赚差价';
+      }
+
+      // 2. 期权行权交割盈亏
+      const elOptNum = document.getElementById('eqOptNum');
+      const elOptSub = document.getElementById('eqOptSub');
+      elOptNum.textContent = fmtMoney(optPnl);
+      elOptNum.className   = 'eq-num ' + (optPnl > 0 ? 'c-green' : optPnl < 0 ? 'c-red' : '');
+
+      const intrinsic = activeStrategy.includes('call')
+        ? Math.max(currentST - K_CALL, 0)
+        : Math.max(K_PUT - currentST, 0);
+
+      if (activeStrategy === 'long_call') {
+        elOptSub.textContent = intrinsic > 0
+          ? `按120买股赚+${intrinsic} / 权利金-5`
+          : `放弃按120买股(0) / 权利金-5`;
+      } else if (activeStrategy === 'short_call') {
+        elOptSub.textContent = intrinsic > 0
+          ? `按120卖股亏-${intrinsic} / 权利金+5`
+          : `无需卖股(0) / 权利金+5`;
+      } else if (activeStrategy === 'long_put') {
+        elOptSub.textContent = intrinsic > 0
+          ? `按80卖股赚+${intrinsic} / 权利金-5`
+          : `放弃按80卖股(0) / 权利金-5`;
+      } else {
+        elOptSub.textContent = intrinsic > 0
+          ? `按80买股接盘亏-${intrinsic} / 权利金+5`
+          : `无需买股接盘(0) / 权利金+5`;
+      }
+
+      // 3. 最终总净利
+      const elTotalNum = document.getElementById('eqTotalNum');
+      const elTotalSub = document.getElementById('eqTotalSub');
+      elTotalNum.textContent = fmtMoney(totalPnl);
+      elTotalNum.className   = 'eq-num ' + (totalPnl > 0 ? 'c-green' : totalPnl < 0 ? 'c-red' : '');
+      elTotalSub.textContent = `含权利金成本价 ${meta.costBasis}元`;
+
+      // 右上指标
+      document.getElementById('sumCostBasis').textContent = meta.costBasis + ' 元';
+      document.getElementById('sumMaxGain').textContent   = meta.mg;
+      document.getElementById('sumMaxLoss').textContent   = meta.ml;
+
+      const elCur = document.getElementById('sumCurrentPnl');
+      elCur.textContent = fmtMoney(totalPnl);
+      elCur.className   = 'sum-val ' + (totalPnl > 0 ? 'c-green' : totalPnl < 0 ? 'c-red' : '');
+
+      // 图表与秒懂账单
+      document.getElementById('chartTitle').textContent = '📊 ' + meta.title;
+      document.getElementById('storyTitle').textContent = `💡 你的期权账单（当到期股价为 ${currentST} 元时）：`;
+
+      const story = buildStory(stockPnl, optPnl, totalPnl, meta);
+      document.getElementById('storyTag').textContent = story.tag;
+      document.getElementById('storyText').innerHTML  = story.text;
+
+      drawChart(meta);
+    }
+
+    window.addEventListener('load', () => {
+      switchMode(true);
+    });
+    window.addEventListener('resize', updateAll);
+  </script>
+</body>
+</html>
