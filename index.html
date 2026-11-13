@@ -570,13 +570,49 @@
     .strat-footer {
       flex: 1 0 auto;
       min-height: 150px;
-      padding: 12px 14px;
-      font-size: clamp(21px, 1.4vw, 28px);
-      line-height: 1.55;
+      padding: 10px 12px;
+      font-size: 15px;
+      line-height: 1.5;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: 6px;
       overflow-wrap: anywhere;
     }
+    /* 每张卡片的说明：成本行 + “涨/跌”两行 */
+    .desc-lead {
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.4;
+      color: #c4b5fd;
+    }
+    .desc-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      line-height: 1.5;
+    }
+    .desc-tag {
+      flex-shrink: 0;
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.4;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-top: 1px;
+    }
+    .desc-tag.up {
+      color: #4ade80;
+      background: rgba(74, 222, 128, 0.14);
+      border: 1px solid rgba(74, 222, 128, 0.45);
+    }
+    .desc-tag.down {
+      color: #fb7185;
+      background: rgba(251, 113, 133, 0.14);
+      border: 1px solid rgba(251, 113, 133, 0.45);
+    }
+    .desc-text { flex: 1; min-width: 0; }
     .settlement-top { flex-wrap: wrap; gap: 8px; }
     .exercise-status { white-space: normal; }
     .equation-grid { grid-template-columns: minmax(0, 1fr) 18px minmax(0, 1.15fr) 18px minmax(0, 1.15fr); gap: 4px; }
@@ -602,7 +638,7 @@
     @media (max-width: 1100px) {
       .workspace { grid-template-columns: minmax(0, 1fr); min-height: 0; }
       .matrix-2x2 { grid-template-rows: repeat(2, minmax(280px, 1fr)); }
-      .strat-footer { font-size: 24px; }
+      .strat-footer { font-size: 16px; }
       .chart-panel { flex: 0 0 auto; height: clamp(380px, 55vh, 660px); }
     }
     @media (max-width: 600px) {
@@ -611,7 +647,7 @@
       .mode-group { width: 100%; }
       .mode-btn { flex: 1 1 180px; }
       .matrix-2x2 { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
-      .strat-footer { min-height: 140px; font-size: 22px; }
+      .strat-footer { min-height: 150px; font-size: 15px; }
       .summary-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .settlement-box { padding: 12px 10px; }
       .eq-title { font-size: 12px; }
@@ -625,9 +661,8 @@
     /* Match the explanatory amounts to their parameter labels. */
     :root { --cost-color: #c4b5fd; --label-size: clamp(16px, 1vw, 20px); }
     .c-cost, #sumCostBasis, #eqTotalSub { color: var(--cost-color) !important; }
-    .description-copy { display: block; width: 100%; }
-    .description-copy .amount { font-weight: 900; }
-    .description-copy .amount:not(.c-cost), .description-copy .money { white-space: nowrap; }
+    .desc-lead .amount, .desc-text .amount { font-weight: 900; }
+    .desc-lead .amount:not(.c-cost), .desc-text .amount:not(.c-cost), .desc-lead .money, .desc-text .money { white-space: nowrap; }
     .param-label, .sum-label, .legend-group { font-size: var(--label-size); line-height: 1.3; }
     .param-value, .sum-val { font-size: clamp(22px, 1.25vw, 26px); }
     .param-cell { gap: 3px; padding: 7px 3px; }
@@ -685,7 +720,9 @@
             </div>
           </div>
           <div id="desc-long_call" class="strat-footer">
-            花5元买看涨权(含权利金买股成本125元)：涨破120元后行使按120元再买1股权利，手里变2股双倍赚钱
+            <div class="desc-lead">花5元买看涨权（含权利金买股成本125元）</div>
+            <div class="desc-row"><span class="desc-tag up">📈 涨</span><span class="desc-text">涨破120元：行权按120元再买1股，手里变2股双倍赚钱，上不封顶（涨到150元赚75元）。</span></div>
+            <div class="desc-row"><span class="desc-tag down">📉 跌</span><span class="desc-text">没涨破120元（比如跌到80元）：Call作废，白亏5元权利金，股票再亏20元，合计亏25元。</span></div>
           </div>
         </div>
 
@@ -713,7 +750,9 @@
             </div>
           </div>
           <div id="desc-short_call" class="strat-footer">
-            收5元权利金(含权利金成本降至95元)：若涨破120元，必须履行按120元卖出手里股票的义务(封顶赚25元)
+            <div class="desc-lead">收5元权利金（含权利金成本降至95元）</div>
+            <div class="desc-row"><span class="desc-tag up">📈 涨</span><span class="desc-text">涨破120元：必须履行按120元卖出手里股票的义务，封顶赚25元。</span></div>
+            <div class="desc-row"><span class="desc-tag down">📉 跌</span><span class="desc-text">没涨破120元（比如跌到80元）：对方放弃，白赚5元权利金，但股票亏20元，合计亏15元。</span></div>
           </div>
         </div>
 
@@ -741,7 +780,9 @@
             </div>
           </div>
           <div id="desc-long_put" class="strat-footer">
-            花5元买看跌权(含权利金总成本105元)：若跌破80元，行使按80元卖出手里股票的权利，锁定最多亏25元
+            <div class="desc-lead">花5元买看跌权（含权利金总成本105元）</div>
+            <div class="desc-row"><span class="desc-tag up">📈 涨</span><span class="desc-text">没跌破80元（比如涨到150元）：Put作废，白亏5元权利金，股票赚50元，合计赚45元。</span></div>
+            <div class="desc-row"><span class="desc-tag down">📉 跌</span><span class="desc-text">跌破80元：行权按80元卖出手里股票，锁定最多亏25元。</span></div>
           </div>
         </div>
 
@@ -769,7 +810,9 @@
             </div>
           </div>
           <div id="desc-short_put" class="strat-footer">
-            收5元权利金(含权利金成本95元)：若跌破80元，必须履行按80元再买进1股的义务，手里变2股双倍承担跌幅
+            <div class="desc-lead">收5元权利金（含权利金成本95元）</div>
+            <div class="desc-row"><span class="desc-tag up">📈 涨</span><span class="desc-text">没跌破80元（比如涨到150元）：对方放弃，白赚5元权利金，股票赚50元，合计赚55元。</span></div>
+            <div class="desc-row"><span class="desc-tag down">📉 跌</span><span class="desc-text">跌破80元：必须按80元再买进1股，手里变2股双倍承担跌幅（跌到50元亏75元）。</span></div>
           </div>
         </div>
 
@@ -900,14 +943,32 @@
       return (v > 0 ? '+' : '') + v + ' 元';
     }
 
-    // Only add inline styling: retain every character of the original wording.
-    function renderColoredDescription(element, text) {
-      const copy = document.createElement('span');
-      copy.className = 'description-copy';
-      const tokens = /含权利金[^()：:，。；]*?\d+元|(?:花|付|收)5元|120元|80元|100元|(?:赚|亏)25元/g;
+    // 把每张卡片的说明渲染成：成本行 + “涨/跌”两行，金额沿用原来的配色规则。
+    function renderColoredDescription(element, desc) {
+      element.replaceChildren();
+      const lead = document.createElement('div');
+      lead.className = 'desc-lead';
+      colorizeInto(lead, desc.lead);
+      element.append(lead);
+      [['up', '📈 涨'], ['down', '📉 跌']].forEach(([key, tag]) => {
+        const row = document.createElement('div');
+        row.className = 'desc-row';
+        const tagEl = document.createElement('span');
+        tagEl.className = 'desc-tag ' + key;
+        tagEl.textContent = tag;
+        const textEl = document.createElement('span');
+        textEl.className = 'desc-text';
+        colorizeInto(textEl, desc[key]);
+        row.append(tagEl, textEl);
+        element.append(row);
+      });
+    }
+
+    function colorizeInto(container, text) {
+      const tokens = /含权利金[^()：:，。；]*?\d+元|(?:花|付|收)5元|120元|80元|(?:赚|亏)\d+元/g;
       let offset = 0;
       for (const match of text.matchAll(tokens)) {
-        copy.append(document.createTextNode(text.slice(offset, match.index)));
+        container.append(document.createTextNode(text.slice(offset, match.index)));
         const mark = document.createElement('span');
         const value = match[0];
         const color = value.startsWith('含权利金') ? 'c-cost'
@@ -926,11 +987,10 @@
         } else {
           mark.textContent = value;
         }
-        copy.append(mark);
+        container.append(mark);
         offset = match.index + value.length;
       }
-      copy.append(document.createTextNode(text.slice(offset)));
-      element.replaceChildren(copy);
+      container.append(document.createTextNode(text.slice(offset)));
     }
 
     function switchMode(withStock) {
@@ -947,20 +1007,50 @@
         short_put:  withStock ? '持股 + Short Put'  : '纯 Short Put'
       };
 
-      // 8种情况全部明确写出“触发行权价后行使买股/卖股权利（或履行买卖义务）”的前提
+      // 8种情况：每张卡片同时写清“涨”和“跌”两种结果（固定参数：现价100，Call行权120，Put行权80，权利金5，每股计）
       const cardDescs = {
-        long_call: withStock
-          ? '花5元买看涨权(含权利金买股成本125元)：涨破120元后行使按120元再买1股权利，手里变2股双倍赚钱'
-          : '花5元买看涨权(含权利金买股成本125元)：涨破120元后行使按120元买入股票权利，再按市价卖出赚差价',
-        short_call: withStock
-          ? '收5元权利金(含权利金成本降至95元)：若涨破120元，必须履行按120元卖出手里股票的义务(封顶赚25元)'
-          : '收5元权利金(含权利金临界价125元)：若涨破120元，必须按高市价买股票、再履行按120元低价卖给对方的义务',
-        long_put: withStock
-          ? '花5元买看跌权(含权利金总成本105元)：若跌破80元，行使按80元卖出手里股票的权利，锁定最多亏25元'
-          : '花5元买看跌权(含权利金保底价75元)：跌破80元后按低市价买股票、再行使按80元高价卖给对方的权利赚差价',
-        short_put: withStock
-          ? '收5元权利金(含权利金成本95元)：若跌破80元，必须履行按80元再买进1股的义务，手里变2股双倍承担跌幅'
-          : '收5元权利金(含权利金接盘成本75元)：若跌破80元，必须履行按80元高价买入对方股票接盘的义务'
+        long_call: {
+          lead: '花5元买看涨权（含权利金买股成本125元）',
+          up: withStock
+            ? '涨破120元：行权按120元再买1股，手里变2股双倍赚钱，上不封顶（涨到150元赚75元）。'
+            : '涨破120元：行权按120元买入，再按市价卖出赚差价（涨到150元赚25元），上不封顶。',
+          down: withStock
+            ? '没涨破120元（比如跌到80元）：Call作废，白亏5元权利金，股票再亏20元，合计亏25元。'
+            : '没涨破120元：Call作废，最多亏5元权利金。'
+        },
+        short_call: {
+          lead: withStock
+            ? '收5元权利金（含权利金成本降至95元）'
+            : '收5元权利金（含权利金临界价125元）',
+          up: withStock
+            ? '涨破120元：必须履行按120元卖出手里股票的义务，封顶赚25元。'
+            : '涨破120元：必须按市价买股，再按120元卖出，涨越多亏越多（涨到150元亏25元）。',
+          down: withStock
+            ? '没涨破120元（比如跌到80元）：对方放弃，白赚5元权利金，但股票亏20元，合计亏15元。'
+            : '没涨破120元：对方放弃，白赚5元权利金。'
+        },
+        long_put: {
+          lead: withStock
+            ? '花5元买看跌权（含权利金总成本105元）'
+            : '花5元买看跌权（含权利金保底价75元）',
+          up: withStock
+            ? '没跌破80元（比如涨到150元）：Put作废，白亏5元权利金，股票赚50元，合计赚45元。'
+            : '没跌破80元：Put作废，最多亏5元权利金。',
+          down: withStock
+            ? '跌破80元：行权按80元卖出手里股票，锁定最多亏25元。'
+            : '跌破80元：按市价买股，再按80元卖出赚差价（跌到50元赚25元），跌越多赚越多。'
+        },
+        short_put: {
+          lead: withStock
+            ? '收5元权利金（含权利金成本95元）'
+            : '收5元权利金（含权利金接盘成本75元）',
+          up: withStock
+            ? '没跌破80元（比如涨到150元）：对方放弃，白赚5元权利金，股票赚50元，合计赚55元。'
+            : '没跌破80元：对方放弃，白赚5元权利金。',
+          down: withStock
+            ? '跌破80元：必须按80元再买进1股，手里变2股双倍承担跌幅（跌到50元亏75元）。'
+            : '跌破80元：必须按80元买入接盘，跌越多亏越多（跌到50元亏25元）。'
+        }
       };
 
       ['long_call', 'short_call', 'long_put', 'short_put'].forEach(key => {
