@@ -686,78 +686,86 @@
       .chart-panel { height: clamp(360px, 49vh, 590px); }
     }
 
-    /* 1920×1080 landscape: wide cards across the top, chart fills the lower right. */
+    /* Original two columns, sized to fill a 1920×1080 screen. */
     body {
       height: 100vh;
       max-height: 100vh;
       overflow: hidden;
-      padding: 12px 16px 14px;
+      padding: 12px 16px;
       gap: 10px;
     }
     .top-bar { min-height: 0; padding: 8px 16px; }
     .workspace {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       flex: 1 1 auto;
       min-height: 0;
       height: auto;
-      gap: 12px;
+      gap: 14px;
       align-items: stretch;
     }
+    .left-column, .right-column {
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
     .matrix-2x2 {
-      flex: 0 0 auto;
+      flex: 1 1 auto;
+      min-height: 0;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      grid-template-rows: auto auto;
+      grid-template-rows: 1fr 1fr;
       align-items: stretch;
       gap: 10px;
     }
     .strat-card {
-      height: auto;
+      height: 100%;
       min-height: 0;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      grid-template-areas: "head params" "foot foot";
-      align-items: center;
-      column-gap: 14px;
-      row-gap: 6px;
-      padding: 8px 12px 10px;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 10px 12px;
     }
-    .strat-header { grid-area: head; }
-    .strat-params { grid-area: params; width: 348px; flex: none; }
-    .strat-title { font-size: 22px; }
-    .strat-pill { font-size: 14px; padding: 4px 10px; }
-    .param-cell { padding: 6px 6px; gap: 2px; }
-    :root { --label-size: 16px; }
-    .param-value, .sum-val { font-size: 24px; }
+    .strat-header { flex: 0 0 auto; }
+    .strat-title { font-size: 20px; }
+    .strat-pill { font-size: 13.5px; padding: 3px 9px; }
+    .strat-params { flex: 0 0 auto; gap: 6px; }
+    .param-cell { padding: 6px 4px; gap: 2px; }
+    :root { --label-size: 15.5px; }
+    .param-value, .sum-val { font-size: 23px; }
     .mode-btn { font-size: 15.5px; }
     .strat-footer {
-      grid-area: foot;
-      flex: none;
+      flex: 1 1 auto;
       min-height: 0;
       height: auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: stretch;
-      justify-content: stretch;
-      gap: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 8px;
       padding: 0;
-      font-size: 18px;
-      line-height: 1.45;
+      font-size: 17.5px;
+      line-height: 1.4;
       background: transparent;
       border: none;
+      overflow: hidden;
     }
     .strat-card.active .strat-footer {
       background: transparent;
       border: none;
       color: #f8fafc;
     }
-    .desc-lead { grid-column: 1 / -1; font-size: 17px; line-height: 1.4; }
+    .desc-lead { flex: 0 0 auto; font-size: 16px; line-height: 1.35; }
     .desc-row {
-      flex: none;
+      flex: 1 1 0;
       min-height: 0;
-      align-items: flex-start;
-      gap: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       margin: 0;
       padding: 8px 10px;
       border-radius: 10px;
@@ -771,62 +779,46 @@
       background: rgba(251, 113, 133, 0.16);
       border: 1px solid rgba(253, 164, 175, 0.5);
     }
-    .desc-tag { font-size: 15px; padding: 3px 10px; }
-    .desc-text { font-size: 18px; color: #f8fafc; }
-    .dash-bottom {
-      flex: 1 1 auto;
-      min-height: 0;
-      display: grid;
-      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.28fr);
-      gap: 12px;
-      align-items: stretch;
-    }
-    .dash-side, .dash-chart {
-      min-width: 0;
-      min-height: 0;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+    .desc-tag { font-size: 14.5px; padding: 2px 9px; }
+    .desc-text { font-size: 17.5px; color: #f8fafc; }
+    .settlement-box { flex: 0 0 auto; }
     .summary-strip { flex: 0 0 auto; }
-    .settlement-box { flex: 1 1 0; min-height: 0; justify-content: center; }
-    .story-panel { flex: 1 1 0; min-height: 0; justify-content: center; }
     .settlement-title { font-size: 16px; }
     .exercise-status { font-size: 14px; }
     .eq-title { font-size: 14px; }
-    .eq-num { font-size: 26px; }
+    .eq-num { font-size: 24px; }
     .eq-sub { font-size: 13px; }
     .chart-panel {
       flex: 1 1 auto;
       height: auto;
       min-height: 0;
-      padding: 8px 12px 8px;
-      gap: 4px;
+      padding: 8px 12px;
+      gap: 6px;
+      display: flex;
+      flex-direction: column;
     }
-    .chart-header { margin-bottom: 0; }
-    .chart-heading { font-size: 18px; }
-    .legend-group { font-size: 15px; gap: 8px 16px; }
+    .chart-header { margin: 0; flex: 0 0 auto; }
+    .chart-heading { font-size: 17px; }
+    .legend-group { font-size: 15px; gap: 8px 14px; }
     .chart-canvas { flex: 1 1 auto; height: auto; min-height: 0; }
-    .slider-panel { flex: 0 0 auto; gap: 6px; padding: 8px 14px; }
+    .slider-panel { flex: 0 0 auto; gap: 6px; padding: 8px 12px; }
     .slider-label { font-size: 16px; }
-    .slider-readout { font-size: 22px; }
-    .quick-btn { font-size: 14px; padding: 7px 4px; }
-    .story-title { font-size: 17px; }
-    .story-content { font-size: 16.5px; line-height: 1.55; }
-    .story-tag { font-size: 13.5px; }
+    .slider-readout { font-size: 20px; }
+    .quick-btn { font-size: 14px; padding: 6px 4px; }
+    .story-panel { flex: 0 0 auto; justify-content: flex-start; padding: 10px 14px; gap: 6px; }
+    .story-title { font-size: 16.5px; }
+    .story-content { font-size: 16px; line-height: 1.5; }
+    .story-tag { font-size: 13px; }
     @media (max-width: 1100px) {
       body { height: auto; max-height: none; overflow: auto; }
-      .workspace { min-height: 0; }
-      .strat-card { display: flex; flex-direction: column; align-items: stretch; }
-      .strat-params { width: auto; }
-      .strat-footer { display: flex; flex-direction: column; font-size: 17px; }
-      .desc-lead { grid-column: auto; }
-      .dash-bottom { display: flex; flex-direction: column; height: auto; }
-      .dash-side, .dash-chart { height: auto; }
-      .settlement-box, .story-panel { flex: none; }
-      .chart-panel { flex: none; height: auto; }
-      .chart-canvas { flex: none; height: 460px; min-height: 460px; }
+      .workspace { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 0; height: auto; }
+      .left-column, .right-column { height: auto; }
+      .matrix-2x2 { flex: none; grid-template-rows: auto auto; }
+      .strat-card { height: auto; }
+      .strat-footer { flex: none; overflow: visible; font-size: 17px; }
+      .desc-row { flex: none; }
+      .chart-panel { flex: none; }
+      .chart-canvas { flex: none; height: 440px; min-height: 440px; }
     }
     @media (max-width: 700px) {
       .matrix-2x2 { grid-template-columns: 1fr; }
@@ -850,6 +842,8 @@
   <!-- 主工作区 -->
   <main class="workspace">
 
+    <!-- 左栏：2x2 策略矩阵 + 三步交割算账 -->
+    <section class="left-column">
       <div class="matrix-2x2">
 
         <!-- 左上：Long Call -->
@@ -974,26 +968,7 @@
 
       </div>
 
-    <section class="dash-bottom">
-      <div class="dash-side">
-      <div class="summary-strip">
-        <div class="sum-box">
-          <span class="sum-label">含权利金成本价</span>
-          <span id="sumCostBasis" class="sum-val c-yellow">105 元</span>
-        </div>
-        <div class="sum-box">
-          <span class="sum-label">最大收益天花板</span>
-          <span id="sumMaxGain" class="sum-val c-green">上不封顶 ∞</span>
-        </div>
-        <div class="sum-box">
-          <span class="sum-label">最大亏损铁底</span>
-          <span id="sumMaxLoss" class="sum-val c-red">-25 元</span>
-        </div>
-        <div class="sum-box">
-          <span class="sum-label">当前到期净损益</span>
-          <span id="sumCurrentPnl" class="sum-val c-red">-25 元</span>
-        </div>
-      </div>
+      <!-- 左下：到期行权买股/卖股三步算账明细 -->
       <div class="settlement-box">
         <div class="settlement-top">
           <span class="settlement-title">🧮 到期行权买股 / 卖股交割算账明细：</span>
@@ -1019,17 +994,31 @@
           </div>
         </div>
       </div>
-      <div class="story-panel">
-        <div class="story-header">
-          <span id="storyTitle" class="story-title">💡 你的期权账单（当到期股价为 50 元时）：</span>
-          <span id="storyTag" class="story-tag">🛡️ 行使80元卖股权利</span>
+    </section>
+
+    <!-- 右栏：4指标 + 压缩无变形折线图 + 折线图正下方拖动条 + 你的期权账单 -->
+    <section class="right-column">
+
+      <div class="summary-strip">
+        <div class="sum-box">
+          <span class="sum-label">含权利金成本价</span>
+          <span id="sumCostBasis" class="sum-val c-yellow">105 元</span>
         </div>
-        <div id="storyText" class="story-content"></div>
-      </div>
+        <div class="sum-box">
+          <span class="sum-label">最大收益天花板</span>
+          <span id="sumMaxGain" class="sum-val c-green">上不封顶 ∞</span>
+        </div>
+        <div class="sum-box">
+          <span class="sum-label">最大亏损铁底</span>
+          <span id="sumMaxLoss" class="sum-val c-red">-25 元</span>
+        </div>
+        <div class="sum-box">
+          <span class="sum-label">当前到期净损益</span>
+          <span id="sumCurrentPnl" class="sum-val c-red">-25 元</span>
+        </div>
       </div>
 
-      <div class="dash-chart">
-      <!-- 折线图：高度随右栏剩余空间拉伸 -->
+      <!-- 压缩高度、1:1真实像素比例的折线图 -->
       <div class="chart-panel">
         <div class="chart-header">
           <span id="chartTitle" class="chart-heading">📊 持股 + Long Put（买保险策略）到期损益折线图</span>
@@ -1064,6 +1053,14 @@
           <button class="quick-btn" onclick="setPrice(150)">🚀 大涨到 150</button>
         </div>
       </div>
+
+      <!-- 右下：白话秒懂账单 -->
+      <div class="story-panel">
+        <div class="story-header">
+          <span id="storyTitle" class="story-title">💡 你的期权账单（当到期股价为 50 元时）：</span>
+          <span id="storyTag" class="story-tag">🛡️ 行使80元卖股权利</span>
+        </div>
+        <div id="storyText" class="story-content"></div>
       </div>
 
     </section>
