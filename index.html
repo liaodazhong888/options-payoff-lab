@@ -570,47 +570,57 @@
     .strat-footer {
       flex: 1 0 auto;
       min-height: 150px;
-      padding: 10px 12px;
-      font-size: 15px;
-      line-height: 1.5;
+      padding: 14px;
+      font-size: 19px;
+      line-height: 1.6;
       display: flex;
       flex-direction: column;
       align-items: stretch;
-      justify-content: flex-start;
-      gap: 6px;
+      justify-content: center;
+      gap: 10px;
       overflow-wrap: anywhere;
     }
     /* 每张卡片的说明：成本行 + “涨/跌”两行 */
     .desc-lead {
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 800;
-      line-height: 1.4;
+      line-height: 1.5;
       color: #c4b5fd;
     }
     .desc-row {
       display: flex;
       align-items: flex-start;
-      gap: 7px;
-      line-height: 1.5;
+      gap: 8px;
+      line-height: 1.6;
+      padding: 6px 8px;
+      border-radius: 8px;
+    }
+    .desc-row.up {
+      background: rgba(74, 222, 128, 0.09);
+      border: 1px solid rgba(74, 222, 128, 0.25);
+    }
+    .desc-row.down {
+      background: rgba(251, 113, 133, 0.09);
+      border: 1px solid rgba(251, 113, 133, 0.25);
     }
     .desc-tag {
       flex-shrink: 0;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 900;
-      line-height: 1.4;
-      padding: 2px 8px;
+      line-height: 1.5;
+      padding: 3px 10px;
       border-radius: 999px;
       margin-top: 1px;
     }
     .desc-tag.up {
-      color: #4ade80;
-      background: rgba(74, 222, 128, 0.14);
-      border: 1px solid rgba(74, 222, 128, 0.45);
+      color: #ffffff;
+      background: #16a34a;
+      border: 1px solid #4ade80;
     }
     .desc-tag.down {
-      color: #fb7185;
-      background: rgba(251, 113, 133, 0.14);
-      border: 1px solid rgba(251, 113, 133, 0.45);
+      color: #ffffff;
+      background: #dc2626;
+      border: 1px solid #fb7185;
     }
     .desc-text { flex: 1; min-width: 0; }
     .settlement-top { flex-wrap: wrap; gap: 8px; }
@@ -638,7 +648,7 @@
     @media (max-width: 1100px) {
       .workspace { grid-template-columns: minmax(0, 1fr); min-height: 0; }
       .matrix-2x2 { grid-template-rows: repeat(2, minmax(280px, 1fr)); }
-      .strat-footer { font-size: 16px; }
+      .strat-footer { font-size: 18px; }
       .chart-panel { flex: 0 0 auto; height: clamp(380px, 55vh, 660px); }
     }
     @media (max-width: 600px) {
@@ -647,7 +657,7 @@
       .mode-group { width: 100%; }
       .mode-btn { flex: 1 1 180px; }
       .matrix-2x2 { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
-      .strat-footer { min-height: 150px; font-size: 15px; }
+      .strat-footer { min-height: 150px; font-size: 17px; }
       .summary-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .settlement-box { padding: 12px 10px; }
       .eq-title { font-size: 12px; }
@@ -721,8 +731,8 @@
           </div>
           <div id="desc-long_call" class="strat-footer">
             <div class="desc-lead">花5元买看涨权（含权利金买股成本125元）</div>
-            <div class="desc-row"><span class="desc-tag up">📈 涨</span><span class="desc-text">涨破120元：行权按120元再买1股，手里变2股双倍赚钱，上不封顶（涨到150元赚75元）。</span></div>
-            <div class="desc-row"><span class="desc-tag down">📉 跌</span><span class="desc-text">没涨破120元（比如跌到80元）：Call作废，白亏5元权利金，股票再亏20元，合计亏25元。</span></div>
+            <div class="desc-row up"><span class="desc-tag up">📈 涨</span><span class="desc-text">涨破120元：行权按120元再买1股，手里变2股双倍赚钱，上不封顶（涨到150元赚75元）。</span></div>
+            <div class="desc-row down"><span class="desc-tag down">📉 跌</span><span class="desc-text">没涨破120元（比如跌到80元）：Call作废，白亏5元权利金，股票再亏20元，合计亏25元。</span></div>
           </div>
         </div>
 
@@ -751,8 +761,8 @@
           </div>
           <div id="desc-short_call" class="strat-footer">
             <div class="desc-lead">收5元权利金（含权利金成本降至95元）</div>
-            <div class="desc-row"><span class="desc-tag up">📈 涨</span><span class="desc-text">涨破120元：必须履行按120元卖出手里股票的义务，封顶赚25元。</span></div>
-            <div class="desc-row"><span class="desc-tag down">📉 跌</span><span class="desc-text">没涨破120元（比如跌到80元）：对方放弃，白赚5元权利金，但股票亏20元，合计亏15元。</span></div>
+            <div class="desc-row up"><span class="desc-tag up">📈 涨</span><span class="desc-text">涨破120元：必须履行按120元卖出手里股票的义务，封顶赚25元。</span></div>
+            <div class="desc-row down"><span class="desc-tag down">📉 跌</span><span class="desc-text">没涨破120元（比如跌到80元）：对方放弃，白赚5元权利金，但股票亏20元，合计亏15元。</span></div>
           </div>
         </div>
 
@@ -781,8 +791,8 @@
           </div>
           <div id="desc-long_put" class="strat-footer">
             <div class="desc-lead">花5元买看跌权（含权利金总成本105元）</div>
-            <div class="desc-row"><span class="desc-tag up">📈 涨</span><span class="desc-text">没跌破80元（比如涨到150元）：Put作废，白亏5元权利金，股票赚50元，合计赚45元。</span></div>
-            <div class="desc-row"><span class="desc-tag down">📉 跌</span><span class="desc-text">跌破80元：行权按80元卖出手里股票，锁定最多亏25元。</span></div>
+            <div class="desc-row up"><span class="desc-tag up">📈 涨</span><span class="desc-text">没跌破80元（比如涨到150元）：Put作废，白亏5元权利金，股票赚50元，合计赚45元。</span></div>
+            <div class="desc-row down"><span class="desc-tag down">📉 跌</span><span class="desc-text">跌破80元：行权按80元卖出手里股票，锁定最多亏25元。</span></div>
           </div>
         </div>
 
@@ -811,8 +821,8 @@
           </div>
           <div id="desc-short_put" class="strat-footer">
             <div class="desc-lead">收5元权利金（含权利金成本95元）</div>
-            <div class="desc-row"><span class="desc-tag up">📈 涨</span><span class="desc-text">没跌破80元（比如涨到150元）：对方放弃，白赚5元权利金，股票赚50元，合计赚55元。</span></div>
-            <div class="desc-row"><span class="desc-tag down">📉 跌</span><span class="desc-text">跌破80元：必须按80元再买进1股，手里变2股双倍承担跌幅（跌到50元亏75元）。</span></div>
+            <div class="desc-row up"><span class="desc-tag up">📈 涨</span><span class="desc-text">没跌破80元（比如涨到150元）：对方放弃，白赚5元权利金，股票赚50元，合计赚55元。</span></div>
+            <div class="desc-row down"><span class="desc-tag down">📉 跌</span><span class="desc-text">跌破80元：必须按80元再买进1股，手里变2股双倍承担跌幅（跌到50元亏75元）。</span></div>
           </div>
         </div>
 
@@ -952,7 +962,7 @@
       element.append(lead);
       [['up', '📈 涨'], ['down', '📉 跌']].forEach(([key, tag]) => {
         const row = document.createElement('div');
-        row.className = 'desc-row';
+        row.className = 'desc-row ' + key;
         const tagEl = document.createElement('span');
         tagEl.className = 'desc-tag ' + key;
         tagEl.textContent = tag;
