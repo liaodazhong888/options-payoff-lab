@@ -686,6 +686,146 @@
       .chart-panel { height: clamp(360px, 49vh, 590px); }
     }
 
+    /* Original two columns, sized to fill a 1920×1080 screen. */
+    body {
+      height: 100vh;
+      max-height: 100vh;
+      overflow: hidden;
+      padding: 12px 16px;
+      gap: 10px;
+    }
+    .top-bar { min-height: 0; padding: 8px 16px; }
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      flex: 1 1 auto;
+      min-height: 0;
+      height: auto;
+      gap: 14px;
+      align-items: stretch;
+    }
+    .left-column, .right-column {
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .matrix-2x2 {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      align-items: stretch;
+      gap: 10px;
+    }
+    .strat-card {
+      height: 100%;
+      min-height: 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 10px 12px;
+    }
+    .strat-header { flex: 0 0 auto; }
+    .strat-title { font-size: 20px; }
+    .strat-pill { font-size: 13.5px; padding: 3px 9px; }
+    .strat-params { flex: 0 0 auto; gap: 6px; }
+    .param-cell { padding: 6px 4px; gap: 2px; }
+    :root { --label-size: 15.5px; }
+    .param-value, .sum-val { font-size: 23px; }
+    .mode-btn { font-size: 15.5px; }
+    .strat-footer {
+      flex: 1 1 auto;
+      min-height: 0;
+      height: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 8px;
+      padding: 0;
+      font-size: 17.5px;
+      line-height: 1.4;
+      background: transparent;
+      border: none;
+      overflow: hidden;
+    }
+    .strat-card.active .strat-footer {
+      background: transparent;
+      border: none;
+      color: #f8fafc;
+    }
+    .desc-lead { flex: 0 0 auto; font-size: 16px; line-height: 1.35; }
+    .desc-row {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0;
+      padding: 8px 10px;
+      border-radius: 10px;
+      line-height: 1.4;
+    }
+    .desc-row.up {
+      background: rgba(74, 222, 128, 0.16);
+      border: 1px solid rgba(134, 239, 172, 0.5);
+    }
+    .desc-row.down {
+      background: rgba(251, 113, 133, 0.16);
+      border: 1px solid rgba(253, 164, 175, 0.5);
+    }
+    .desc-tag { font-size: 14.5px; padding: 2px 9px; }
+    .desc-text { font-size: 17.5px; color: #f8fafc; }
+    .settlement-box { flex: 0 0 auto; }
+    .summary-strip { flex: 0 0 auto; }
+    .settlement-title { font-size: 16px; }
+    .exercise-status { font-size: 14px; }
+    .eq-title { font-size: 14px; }
+    .eq-num { font-size: 24px; }
+    .eq-sub { font-size: 13px; }
+    .chart-panel {
+      flex: 1 1 auto;
+      height: auto;
+      min-height: 0;
+      padding: 8px 12px;
+      gap: 6px;
+      display: flex;
+      flex-direction: column;
+    }
+    .chart-header { margin: 0; flex: 0 0 auto; }
+    .chart-heading { font-size: 17px; }
+    .legend-group { font-size: 15px; gap: 8px 14px; }
+    .chart-canvas { flex: 1 1 auto; height: auto; min-height: 0; }
+    .slider-panel { flex: 0 0 auto; gap: 6px; padding: 8px 12px; }
+    .slider-label { font-size: 16px; }
+    .slider-readout { font-size: 20px; }
+    .quick-btn { font-size: 14px; padding: 6px 4px; }
+    .story-panel { flex: 0 0 auto; justify-content: flex-start; padding: 10px 14px; gap: 6px; }
+    .story-title { font-size: 16.5px; }
+    .story-content { font-size: 16px; line-height: 1.5; }
+    .story-tag { font-size: 13px; }
+    @media (max-width: 1100px) {
+      body { height: auto; max-height: none; overflow: auto; }
+      .workspace { display: grid; grid-template-columns: minmax(0, 1fr); min-height: 0; height: auto; }
+      .left-column, .right-column { height: auto; }
+      .matrix-2x2 { flex: none; grid-template-rows: auto auto; }
+      .strat-card { height: auto; }
+      .strat-footer { flex: none; overflow: visible; font-size: 17px; }
+      .desc-row { flex: none; }
+      .chart-panel { flex: none; }
+      .chart-canvas { flex: none; height: 440px; min-height: 440px; }
+    }
+    @media (max-width: 700px) {
+      .matrix-2x2 { grid-template-columns: 1fr; }
+      .desc-text { font-size: 17px; }
+      .chart-canvas { height: 400px; min-height: 400px; }
+    }
+
   </style>
 </head>
 <body>
@@ -1242,128 +1382,180 @@
       const box = document.getElementById('chartBox');
       const svg = document.getElementById('payoffSvg');
       const W = Math.max(box.clientWidth || 760, 320);
-      const H = Math.max(box.clientHeight || 225, 180);
+      const H = Math.max(box.clientHeight || 480, 360);
 
-      // 1:1 真实像素映射，彻底杜绝文字与数字纵向拉伸变形
       svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
       svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
-      const axisSize = W < 600 ? 14 : W < 800 ? 16 : 20;
-      const noteSize = W < 600 ? 14 : W < 800 ? 16 : 18;
-      const noteHeight = noteSize + 14;
-      const padL = axisSize * 3.8, padR = 30, padT = 30, padB = axisSize * 2.8 + 12;
+      const axisSize = W < 560 ? 15 : 18;
+      const noteSize = W < 560 ? 14 : 17;
+      const padL = Math.round(axisSize * 4.9);
+      const padR = 18;
+      const padT = 12;
+      const padB = Math.round(axisSize * 4.35 + 8);
       const costColor = '#c4b5fd';
       const kColor = meta.k === K_PUT ? '#38bdf8' : '#facc15';
-      const textWidth = text => [...text].reduce((width, char) => width + (char.charCodeAt(0) > 255 ? noteSize : noteSize * 0.62), 0) + 24;
-      const clampLabelX = (center, width) => Math.max(padL + 2, Math.min(center - width / 2, W - padR - width - 2));
+      const textWidth = text => [...text].reduce((width, char) => width + (char.charCodeAt(0) > 255 ? noteSize * 1.05 : noteSize * 0.62), 0) + 28;
       const plotW = W - padL - padR;
       const plotH = H - padT - padB;
-
       const minX = 40, maxX = 160;
       const minY = -95, maxY = 95;
-
       const toX = x => padL + ((x - minX) / (maxX - minX)) * plotW;
-      const toY = y => {
-        const clamped = Math.max(minY, Math.min(maxY, y));
-        return padT + ((maxY - clamped) / (maxY - minY)) * plotH;
-      };
-
+      const toY = y => padT + ((maxY - Math.max(minY, Math.min(maxY, y))) / (maxY - minY)) * plotH;
       const zeroY = toY(0);
+      const font = `-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif`;
       let html = '';
 
-      // 盈亏背景区
-      html += `<rect x="${padL}" y="${padT}" width="${plotW}" height="${zeroY - padT}" fill="rgba(16, 185, 129, 0.08)" />`;
-      html += `<rect x="${padL}" y="${zeroY}" width="${plotW}" height="${H - padB - zeroY}" fill="rgba(239, 68, 68, 0.08)" />`;
+      html += `<rect x="${padL}" y="${padT}" width="${plotW}" height="${Math.max(0, zeroY - padT)}" fill="rgba(16, 185, 129, 0.08)" />`;
+      html += `<rect x="${padL}" y="${zeroY}" width="${plotW}" height="${Math.max(0, H - padB - zeroY)}" fill="rgba(239, 68, 68, 0.08)" />`;
 
-      // 水平网格线
       [-75, -50, -25, 0, 25, 50, 75].forEach(val => {
         const y = toY(val);
         const isZero = val === 0;
         const col = val > 0 ? '#4ade80' : val < 0 ? '#fb7185' : '#f8fafc';
         html += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="${isZero ? '#94a3b8' : '#1e293b'}" stroke-width="${isZero ? 2 : 1}" />`;
-        html += `<text x="${padL - 8}" y="${y + axisSize * 0.35}" text-anchor="end" fill="${col}" font-size="${axisSize}" font-weight="800">${val > 0 ? '+' + val : val}元</text>`;
+        html += `<text x="${padL - 10}" y="${y + axisSize * 0.35}" text-anchor="end" fill="${col}" font-size="${axisSize}" font-weight="800" font-family="${font}">${val > 0 ? '+' + val : val}元</text>`;
       });
 
-      // 垂直网格线与横轴价格
+      // Stagger 80/120 under 50/100/150 so the longer axis captions do not collide.
       [50, 80, 100, 120, 150].forEach(p => {
         const x = toX(p);
-        const isK = (p === 80 || p === 120);
+        const isK = p === 80 || p === 120;
         const label = p === 80 ? '80元(Put行权)' : p === 100 ? '100元(现价)' : p === 120 ? '120元(Call行权)' : p + '元';
         const col = p === 80 ? '#38bdf8' : p === 120 ? '#facc15' : p === 100 ? '#ffffff' : '#94a3b8';
         html += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${H - padB}" stroke="${isK ? '#334155' : '#1e293b'}" stroke-width="1.2" stroke-dasharray="4,4" />`;
         const split = label.indexOf('(');
-        const labelMarkup = split < 0 ? label : `<tspan x="${x}">${label.slice(0, split)}</tspan><tspan x="${x}" dy="1.2em">${label.slice(split)}</tspan>`;
-        html += `<text x="${x}" y="${H - padB + axisSize + 8}" text-anchor="middle" fill="${col}" font-size="${axisSize}" font-weight="800">${labelMarkup}</text>`;
+        const lower = p === 80 || p === 120;
+        const yBase = (H - padB) + (lower ? axisSize * 2.45 + 2 : Math.round(axisSize * 0.9));
+        const labelMarkup = split < 0
+          ? label
+          : `<tspan x="${x}">${label.slice(0, split)}</tspan><tspan x="${x}" dy="${Math.round(axisSize * 1.08)}">${label.slice(split)}</tspan>`;
+        html += `<text x="${x}" y="${yBase}" text-anchor="middle" fill="${col}" font-size="${axisSize}" font-weight="800" font-family="${font}">${labelMarkup}</text>`;
       });
 
-      // 只拿股票裸奔虚线
+      const segments = [{ x1: padL, y1: zeroY, x2: W - padR, y2: zeroY }];
+      const addPoly = pts => {
+        for (let i = 1; i < pts.length; i++) segments.push({ x1: pts[i - 1][0], y1: pts[i - 1][1], x2: pts[i][0], y2: pts[i][1] });
+      };
+
       if (hasStock) {
-        let stockPts = [];
-        for (let s = minX; s <= maxX; s += 2) {
-          stockPts.push(`${toX(s)},${toY(s - S0)}`);
-        }
-        html += `<polyline points="${stockPts.join(' ')}" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-dasharray="6,5" />`;
+        const stockPts = [];
+        for (let s = minX; s <= maxX; s += 2) stockPts.push([toX(s), toY(s - S0)]);
+        addPoly(stockPts);
+        html += `<polyline points="${stockPts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#94a3b8" stroke-width="2.2" stroke-dasharray="6,5" />`;
       }
 
-      // 策略损益实线
-      let stratPts = [];
-      for (let s = minX; s <= maxX; s += 1) {
-        stratPts.push(`${toX(s)},${toY(calcTotalPayoff(activeStrategy, hasStock, s))}`);
-      }
-      html += `<polyline points="${stratPts.join(' ')}" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />`;
+      const stratPts = [];
+      for (let s = minX; s <= maxX; s += 2) stratPts.push([toX(s), toY(calcTotalPayoff(activeStrategy, hasStock, s))]);
+      addPoly(stratPts);
+      html += `<polyline points="${stratPts.map(p => p.join(',')).join(' ')}" fill="none" stroke="#38bdf8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />`;
 
-      // Larger labels use the same semantic colors as the strategy cards.
       const beX = toX(meta.costBasis);
-      const costText = `含权利金成本价 ${meta.costBasis}元`;
-      const costWidth = textWidth(costText);
-      const costX = clampLabelX(beX, costWidth);
-      const costY = zeroY - noteHeight - 12;
-      html += `<circle cx="${beX}" cy="${zeroY}" r="5.5" fill="${costColor}" stroke="#090e1a" stroke-width="2" />`;
-      html += `<rect x="${costX}" y="${costY}" width="${costWidth}" height="${noteHeight}" rx="6" fill="#0f172a" stroke="${costColor}" stroke-width="1.2" />`;
-      html += `<text x="${costX + costWidth / 2}" y="${costY + noteSize + 5}" text-anchor="middle" fill="${costColor}" font-size="${noteSize}" font-weight="900">${costText}</text>`;
-
       const kX = toX(meta.k);
-      const kPnl = calcTotalPayoff(activeStrategy, hasStock, meta.k);
-      const kY = toY(kPnl);
-      const kText = `行权拐点 K=${meta.k}元`;
-      const kWidth = textWidth(kText);
-      const kBoxX = clampLabelX(kX, kWidth);
-      const kBoxY = kY + noteHeight + 14 < H - padB ? kY + 10 : kY - noteHeight - 10;
-      html += `<circle cx="${kX}" cy="${kY}" r="6" fill="${kColor}" stroke="#090e1a" stroke-width="2" />`;
-      html += `<rect x="${kBoxX}" y="${kBoxY}" width="${kWidth}" height="${noteHeight}" rx="6" fill="#0f172a" stroke="${kColor}" stroke-width="1.2" />`;
-      html += `<text x="${kBoxX + kWidth / 2}" y="${kBoxY + noteSize + 5}" text-anchor="middle" fill="${kColor}" font-size="${noteSize}" font-weight="900">${kText}</text>`;
-
-      // 拖动轴竖线与“含权利金成本价”浮标（修正原“股价XX”标识）
+      const kY = toY(calcTotalPayoff(activeStrategy, hasStock, meta.k));
       const curX = toX(currentST);
       const curPnl = calcTotalPayoff(activeStrategy, hasStock, currentST);
       const curY = toY(curPnl);
       const dotCol = curPnl > 0 ? '#4ade80' : curPnl < 0 ? '#fb7185' : '#cbd5e1';
 
-      html += `<line x1="${curX}" y1="${padT}" x2="${curX}" y2="${H - padB}" stroke="#f8fafc" stroke-width="1.8" stroke-dasharray="4,4" />`;
+      html += `<line x1="${curX}" y1="${padT}" x2="${curX}" y2="${H - padB}" stroke="#f8fafc" stroke-width="1.6" stroke-dasharray="4,4" />`;
+      segments.push({ x1: curX, y1: padT, x2: curX, y2: H - padB });
 
-      if (hasStock) {
-        const rawY = toY(currentST - S0);
-        html += `<circle cx="${curX}" cy="${rawY}" r="4.5" fill="#94a3b8" stroke="#090e1a" stroke-width="1.5" />`;
+      const occupied = [
+        { x: beX - 9, y: zeroY - 9, w: 18, h: 18 },
+        { x: kX - 9, y: kY - 9, w: 18, h: 18 },
+        { x: curX - 11, y: curY - 11, w: 22, h: 22 }
+      ];
+      const overlaps = (a, b, gap) => !(a.x + a.w + gap <= b.x || b.x + b.w + gap <= a.x || a.y + a.h + gap <= b.y || b.y + b.h + gap <= a.y);
+      const inBounds = b => b.x >= padL + 4 && b.y >= padT + 4 && b.x + b.w <= W - padR - 4 && b.y + b.h <= H - padB - 4;
+      const samplesHit = (b, pad) => {
+        let n = 0;
+        const x0 = b.x - pad, y0 = b.y - pad, x1 = b.x + b.w + pad, y1 = b.y + b.h + pad;
+        for (const s of segments) {
+          const steps = Math.max(1, Math.ceil(Math.hypot(s.x2 - s.x1, s.y2 - s.y1) / 8));
+          for (let i = 0; i <= steps; i++) {
+            const t = i / steps;
+            const px = s.x1 + (s.x2 - s.x1) * t;
+            const py = s.y1 + (s.y2 - s.y1) * t;
+            if (px >= x0 && px <= x1 && py >= y0 && py <= y1) { n++; break; }
+          }
+        }
+        return n;
+      };
+      const edgePoint = (anchor, b) => ({
+        x: Math.max(b.x, Math.min(anchor.x, b.x + b.w)),
+        y: Math.max(b.y, Math.min(anchor.y, b.y + b.h))
+      });
+      const segHitsBox = (x1, y1, x2, y2, b) => {
+        for (let i = 0; i <= 8; i++) {
+          const t = i / 8;
+          const px = x1 + (x2 - x1) * t;
+          const py = y1 + (y2 - y1) * t;
+          if (px >= b.x && px <= b.x + b.w && py >= b.y && py <= b.y + b.h) return true;
+        }
+        return false;
+      };
+
+      const leaders = [];
+      const boxes = [];
+      function place(anchor, lines, stroke) {
+        const w = Math.max(...lines.map(line => textWidth(line.text)));
+        const lineH = noteSize + 6;
+        const h = lines.length * lineH + 14;
+        const dirs = [[0, -1], [0, 1], [-1, -0.55], [1, -0.55], [-1, 0.55], [1, 0.55], [-1, -1], [1, -1], [-1, 1], [1, 1], [-1, 0], [1, 0]];
+        const cands = [];
+        [88, 130, 176, 230, 290].forEach(g => {
+          dirs.forEach(([dx, dy]) => {
+            const len = Math.hypot(dx, dy);
+            cands.push({ x: anchor.x + dx / len * g - w / 2, y: anchor.y + dy / len * g - h / 2 });
+          });
+        });
+        cands.push({ x: padL + 10, y: padT + 10 }, { x: W - padR - w - 10, y: padT + 10 });
+        cands.push({ x: padL + 10, y: H - padB - h - 10 }, { x: W - padR - w - 10, y: H - padB - h - 10 });
+        cands.push({ x: padL + (plotW - w) / 2, y: padT + 10 });
+        cands.push({ x: padL + (plotW - w) / 2, y: H - padB - h - 10 });
+        let best = { x: padL + 10, y: padT + 10, w, h };
+        let bestScore = Infinity;
+        cands.forEach(c => {
+          const b = { x: c.x, y: c.y, w, h };
+          const dist = Math.hypot(b.x + w / 2 - anchor.x, b.y + h / 2 - anchor.y);
+          let score = inBounds(b) ? 0 : 100000;
+          occupied.forEach(o => { if (overlaps(b, o, 16)) score += 90000; });
+          score += samplesHit(b, 22) * 14000;
+          const tip = edgePoint(anchor, b);
+          occupied.forEach(o => {
+            if (o.w > 30 && segHitsBox(anchor.x, anchor.y, tip.x, tip.y, o)) score += 40000;
+          });
+          score += Math.max(0, 150 - dist) * 18;
+          if (score < bestScore) { bestScore = score; best = b; }
+        });
+        occupied.push(best);
+        const tip = edgePoint(anchor, best);
+        if (Math.hypot(tip.x - anchor.x, tip.y - anchor.y) > 10) {
+          leaders.push(`<line x1="${anchor.x}" y1="${anchor.y}" x2="${tip.x}" y2="${tip.y}" stroke="${stroke}" stroke-width="1.25" opacity="0.9" />`);
+        }
+        let block = `<rect class="callout" x="${best.x}" y="${best.y}" width="${best.w}" height="${best.h}" rx="7" fill="#0f172a" stroke="${stroke}" stroke-width="1.4" />`;
+        lines.forEach((line, i) => {
+          block += `<text x="${best.x + best.w / 2}" y="${best.y + 10 + noteSize + i * lineH}" text-anchor="middle" fill="${line.fill || stroke}" font-size="${noteSize}" font-weight="900" font-family="${font}">${line.text}</text>`;
+        });
+        boxes.push(block);
       }
 
+      place({ x: beX, y: zeroY }, [{ text: `含权利金成本价 ${meta.costBasis}元`, fill: costColor }], costColor);
+      place({ x: kX, y: kY }, [{ text: `行权拐点 K=${meta.k}元`, fill: kColor }], kColor);
+      place({ x: curX, y: curY }, [
+        { text: `含权利金成本价 ${meta.costBasis}元`, fill: costColor },
+        { text: `净损益 ${fmtMoney(curPnl)}`, fill: dotCol }
+      ], dotCol);
+
+      html += leaders.join('');
+      if (hasStock) {
+        html += `<circle cx="${curX}" cy="${toY(currentST - S0)}" r="4.5" fill="#94a3b8" stroke="#090e1a" stroke-width="1.5" />`;
+      }
+      html += `<circle cx="${beX}" cy="${zeroY}" r="5.5" fill="${costColor}" stroke="#090e1a" stroke-width="2" />`;
+      html += `<circle cx="${kX}" cy="${kY}" r="6" fill="${kColor}" stroke="#090e1a" stroke-width="2" />`;
       html += `<circle cx="${curX}" cy="${curY}" r="8" fill="${dotCol}" stroke="#ffffff" stroke-width="2.5" />`;
-
-      const badgeCostText = `含权利金成本价 ${meta.costBasis}元`;
-      const badgePnlText = ` | 净损益 ${fmtMoney(curPnl)}`;
-      const wrapBadge = textWidth(badgeCostText + badgePnlText) > W - padL - padR - 8;
-      const badgeW = wrapBadge ? Math.max(textWidth(badgeCostText), textWidth(badgePnlText)) : textWidth(badgeCostText + badgePnlText);
-      const badgeH = wrapBadge ? noteHeight + noteSize * 1.2 : noteHeight;
-      const badgeX = Math.min(Math.max(curX - badgeW / 2, padL + 4), W - padR - badgeW - 4);
-      const candidates = [curY - badgeH - 10, curY + 12];
-      for (let y = padT + 4; y + badgeH < H - padB; y += badgeH + 8) candidates.push(y);
-      const occupied = [{x: costX, y: costY, w: costWidth, h: noteHeight}, {x: kBoxX, y: kBoxY, w: kWidth, h: noteHeight}];
-      const clear = y => y >= padT && y + badgeH <= H - padB && occupied.every(r =>
-        badgeX + badgeW + 5 < r.x || badgeX > r.x + r.w + 5 || y + badgeH + 5 < r.y || y > r.y + r.h + 5);
-      const badgeY = candidates.find(clear) ?? Math.max(padT, Math.min(curY - badgeH - 10, H - padB - badgeH));
-
-      html += `<rect x="${badgeX}" y="${badgeY}" width="${badgeW}" height="${badgeH}" rx="7" fill="#0f172a" stroke="${dotCol}" stroke-width="2" />`;
-      html += `<text x="${badgeX + badgeW / 2}" y="${badgeY + noteSize + 5}" text-anchor="middle" fill="${dotCol}" font-size="${noteSize}" font-weight="900"><tspan fill="${costColor}">${badgeCostText}</tspan><tspan ${wrapBadge ? `x="${badgeX + badgeW / 2}" dy="1.2em"` : ""}>${badgePnlText}</tspan></text>`;
-
+      html += boxes.join('');
       svg.innerHTML = html;
     }
 
