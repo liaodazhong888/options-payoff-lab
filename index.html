@@ -686,91 +686,152 @@
       .chart-panel { height: clamp(360px, 49vh, 590px); }
     }
 
-    /* Cards hug their copy. 涨/跌 are separate tinted blocks. Chart gets a fixed plot. */
-    body { padding: 16px 18px; gap: 16px; }
-    .workspace { flex: 0 0 auto; min-height: 0; align-items: start; gap: 18px; }
-    .left-column, .right-column { gap: 14px; }
-    .matrix-2x2 {
-      flex: 0 0 auto;
-      grid-template-rows: auto auto;
-      align-items: start;
-      gap: 14px;
+    /* 1920×1080 landscape: wide cards across the top, chart fills the lower right. */
+    body {
+      height: 100vh;
+      max-height: 100vh;
+      overflow: hidden;
+      padding: 12px 16px 14px;
+      gap: 10px;
     }
-    .strat-card { height: auto; gap: 12px; padding: 14px; }
-    .strat-title { font-size: clamp(20px, 1.2vw, 23px); }
-    .strat-pill { font-size: 13.5px; padding: 4px 10px; }
-    .strat-params { gap: 8px; }
-    .param-cell { padding: 8px 4px; gap: 4px; }
-    :root { --label-size: clamp(16px, 1.05vw, 18px); }
-    .param-value, .sum-val { font-size: clamp(23px, 1.35vw, 28px); }
-    .mode-btn { font-size: 15.5px; }
-    .strat-footer {
-      flex: 0 0 auto;
+    .top-bar { min-height: 0; padding: 8px 16px; }
+    .workspace {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
       min-height: 0;
       height: auto;
-      padding: 12px;
-      font-size: 20px;
-      line-height: 1.55;
-      justify-content: flex-start;
       gap: 12px;
+      align-items: stretch;
+    }
+    .matrix-2x2 {
+      flex: 0 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      align-items: stretch;
+      gap: 10px;
+    }
+    .strat-card {
+      height: auto;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-areas: "head params" "foot foot";
+      align-items: center;
+      column-gap: 14px;
+      row-gap: 6px;
+      padding: 8px 12px 10px;
+    }
+    .strat-header { grid-area: head; }
+    .strat-params { grid-area: params; width: 348px; flex: none; }
+    .strat-title { font-size: 22px; }
+    .strat-pill { font-size: 14px; padding: 4px 10px; }
+    .param-cell { padding: 6px 6px; gap: 2px; }
+    :root { --label-size: 16px; }
+    .param-value, .sum-val { font-size: 24px; }
+    .mode-btn { font-size: 15.5px; }
+    .strat-footer {
+      grid-area: foot;
+      flex: none;
+      min-height: 0;
+      height: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: stretch;
+      justify-content: stretch;
+      gap: 10px 14px;
+      padding: 0;
+      font-size: 18px;
+      line-height: 1.45;
+      background: transparent;
+      border: none;
     }
     .strat-card.active .strat-footer {
-      background: #101c36;
-      border-color: rgba(56, 189, 248, 0.55);
+      background: transparent;
+      border: none;
       color: #f8fafc;
     }
-    .desc-lead { font-size: 18.5px; line-height: 1.5; }
+    .desc-lead { grid-column: 1 / -1; font-size: 17px; line-height: 1.4; }
     .desc-row {
-      flex: 0 0 auto;
+      flex: none;
+      min-height: 0;
+      align-items: flex-start;
       gap: 10px;
       margin: 0;
-      padding: 11px 12px;
+      padding: 8px 10px;
       border-radius: 10px;
-      line-height: 1.55;
+      line-height: 1.4;
     }
     .desc-row.up {
       background: rgba(74, 222, 128, 0.16);
-      border: 1px solid rgba(134, 239, 172, 0.48);
+      border: 1px solid rgba(134, 239, 172, 0.5);
     }
     .desc-row.down {
       background: rgba(251, 113, 133, 0.16);
       border: 1px solid rgba(253, 164, 175, 0.5);
     }
     .desc-tag { font-size: 15px; padding: 3px 10px; }
-    .desc-text { font-size: 20px; color: #f8fafc; }
-    .settlement-title { font-size: 16.5px; }
-    .exercise-status { font-size: 14.5px; }
+    .desc-text { font-size: 18px; color: #f8fafc; }
+    .dash-bottom {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.28fr);
+      gap: 12px;
+      align-items: stretch;
+    }
+    .dash-side, .dash-chart {
+      min-width: 0;
+      min-height: 0;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .summary-strip { flex: 0 0 auto; }
+    .settlement-box { flex: 1 1 0; min-height: 0; justify-content: center; }
+    .story-panel { flex: 1 1 0; min-height: 0; justify-content: center; }
+    .settlement-title { font-size: 16px; }
+    .exercise-status { font-size: 14px; }
     .eq-title { font-size: 14px; }
     .eq-num { font-size: 26px; }
     .eq-sub { font-size: 13px; }
     .chart-panel {
+      flex: 1 1 auto;
       height: auto;
-      flex: 0 0 auto;
       min-height: 0;
-      padding: 12px 14px 14px;
-      gap: 10px;
+      padding: 8px 12px 8px;
+      gap: 4px;
     }
-    .chart-header { margin-bottom: 2px; }
-    .chart-heading { font-size: clamp(18px, 1.15vw, 22px); }
-    .legend-group { font-size: 15.5px; gap: 8px 16px; }
-    .chart-canvas { flex: none; height: 520px; min-height: 520px; }
-    .slider-label { font-size: 16.5px; }
+    .chart-header { margin-bottom: 0; }
+    .chart-heading { font-size: 18px; }
+    .legend-group { font-size: 15px; gap: 8px 16px; }
+    .chart-canvas { flex: 1 1 auto; height: auto; min-height: 0; }
+    .slider-panel { flex: 0 0 auto; gap: 6px; padding: 8px 14px; }
+    .slider-label { font-size: 16px; }
     .slider-readout { font-size: 22px; }
-    .quick-btn { font-size: 14.5px; padding: 8px 4px; }
-    .story-title { font-size: 17.5px; }
-    .story-content { font-size: 17px; line-height: 1.6; }
+    .quick-btn { font-size: 14px; padding: 7px 4px; }
+    .story-title { font-size: 17px; }
+    .story-content { font-size: 16.5px; line-height: 1.55; }
     .story-tag { font-size: 13.5px; }
     @media (max-width: 1100px) {
+      body { height: auto; max-height: none; overflow: auto; }
       .workspace { min-height: 0; }
-      .matrix-2x2 { grid-template-rows: auto auto; }
-      .strat-footer { min-height: 0; font-size: 17.5px; }
-      .chart-panel { height: auto; flex: 0 0 auto; }
-      .chart-canvas { height: 480px; min-height: 480px; }
+      .strat-card { display: flex; flex-direction: column; align-items: stretch; }
+      .strat-params { width: auto; }
+      .strat-footer { display: flex; flex-direction: column; font-size: 17px; }
+      .desc-lead { grid-column: auto; }
+      .dash-bottom { display: flex; flex-direction: column; height: auto; }
+      .dash-side, .dash-chart { height: auto; }
+      .settlement-box, .story-panel { flex: none; }
+      .chart-panel { flex: none; height: auto; }
+      .chart-canvas { flex: none; height: 460px; min-height: 460px; }
     }
-    @media (max-width: 600px) {
-      .strat-footer { min-height: 0; font-size: 17px; }
+    @media (max-width: 700px) {
+      .matrix-2x2 { grid-template-columns: 1fr; }
       .desc-text { font-size: 17px; }
-      .chart-canvas { height: 420px; min-height: 420px; }
+      .chart-canvas { height: 400px; min-height: 400px; }
     }
 
   </style>
@@ -789,8 +850,6 @@
   <!-- 主工作区 -->
   <main class="workspace">
 
-    <!-- 左栏：2x2 策略矩阵 + 三步交割算账 -->
-    <section class="left-column">
       <div class="matrix-2x2">
 
         <!-- 左上：Long Call -->
@@ -915,7 +974,26 @@
 
       </div>
 
-      <!-- 左下：到期行权买股/卖股三步算账明细 -->
+    <section class="dash-bottom">
+      <div class="dash-side">
+      <div class="summary-strip">
+        <div class="sum-box">
+          <span class="sum-label">含权利金成本价</span>
+          <span id="sumCostBasis" class="sum-val c-yellow">105 元</span>
+        </div>
+        <div class="sum-box">
+          <span class="sum-label">最大收益天花板</span>
+          <span id="sumMaxGain" class="sum-val c-green">上不封顶 ∞</span>
+        </div>
+        <div class="sum-box">
+          <span class="sum-label">最大亏损铁底</span>
+          <span id="sumMaxLoss" class="sum-val c-red">-25 元</span>
+        </div>
+        <div class="sum-box">
+          <span class="sum-label">当前到期净损益</span>
+          <span id="sumCurrentPnl" class="sum-val c-red">-25 元</span>
+        </div>
+      </div>
       <div class="settlement-box">
         <div class="settlement-top">
           <span class="settlement-title">🧮 到期行权买股 / 卖股交割算账明细：</span>
@@ -941,31 +1019,17 @@
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- 右栏：4指标 + 压缩无变形折线图 + 折线图正下方拖动条 + 你的期权账单 -->
-    <section class="right-column">
-
-      <div class="summary-strip">
-        <div class="sum-box">
-          <span class="sum-label">含权利金成本价</span>
-          <span id="sumCostBasis" class="sum-val c-yellow">105 元</span>
+      <div class="story-panel">
+        <div class="story-header">
+          <span id="storyTitle" class="story-title">💡 你的期权账单（当到期股价为 50 元时）：</span>
+          <span id="storyTag" class="story-tag">🛡️ 行使80元卖股权利</span>
         </div>
-        <div class="sum-box">
-          <span class="sum-label">最大收益天花板</span>
-          <span id="sumMaxGain" class="sum-val c-green">上不封顶 ∞</span>
-        </div>
-        <div class="sum-box">
-          <span class="sum-label">最大亏损铁底</span>
-          <span id="sumMaxLoss" class="sum-val c-red">-25 元</span>
-        </div>
-        <div class="sum-box">
-          <span class="sum-label">当前到期净损益</span>
-          <span id="sumCurrentPnl" class="sum-val c-red">-25 元</span>
-        </div>
+        <div id="storyText" class="story-content"></div>
+      </div>
       </div>
 
-      <!-- 压缩高度、1:1真实像素比例的折线图 -->
+      <div class="dash-chart">
+      <!-- 折线图：高度随右栏剩余空间拉伸 -->
       <div class="chart-panel">
         <div class="chart-header">
           <span id="chartTitle" class="chart-heading">📊 持股 + Long Put（买保险策略）到期损益折线图</span>
@@ -1000,14 +1064,6 @@
           <button class="quick-btn" onclick="setPrice(150)">🚀 大涨到 150</button>
         </div>
       </div>
-
-      <!-- 右下：白话秒懂账单 -->
-      <div class="story-panel">
-        <div class="story-header">
-          <span id="storyTitle" class="story-title">💡 你的期权账单（当到期股价为 50 元时）：</span>
-          <span id="storyTag" class="story-tag">🛡️ 行使80元卖股权利</span>
-        </div>
-        <div id="storyText" class="story-content"></div>
       </div>
 
     </section>
@@ -1339,7 +1395,7 @@
       const padL = Math.round(axisSize * 4.9);
       const padR = 18;
       const padT = 12;
-      const padB = Math.round(axisSize * 5.5 + 16);
+      const padB = Math.round(axisSize * 4.35 + 8);
       const costColor = '#c4b5fd';
       const kColor = meta.k === K_PUT ? '#38bdf8' : '#facc15';
       const textWidth = text => [...text].reduce((width, char) => width + (char.charCodeAt(0) > 255 ? noteSize * 1.05 : noteSize * 0.62), 0) + 28;
@@ -1373,10 +1429,10 @@
         html += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${H - padB}" stroke="${isK ? '#334155' : '#1e293b'}" stroke-width="1.2" stroke-dasharray="4,4" />`;
         const split = label.indexOf('(');
         const lower = p === 80 || p === 120;
-        const yBase = (H - padB) + (lower ? axisSize * 3.35 + 8 : axisSize + 4);
+        const yBase = (H - padB) + (lower ? axisSize * 2.45 + 2 : Math.round(axisSize * 0.9));
         const labelMarkup = split < 0
           ? label
-          : `<tspan x="${x}">${label.slice(0, split)}</tspan><tspan x="${x}" dy="${Math.round(axisSize * 1.2)}">${label.slice(split)}</tspan>`;
+          : `<tspan x="${x}">${label.slice(0, split)}</tspan><tspan x="${x}" dy="${Math.round(axisSize * 1.08)}">${label.slice(split)}</tspan>`;
         html += `<text x="${x}" y="${yBase}" text-anchor="middle" fill="${col}" font-size="${axisSize}" font-weight="800" font-family="${font}">${labelMarkup}</text>`;
       });
 
@@ -1449,28 +1505,31 @@
         const w = Math.max(...lines.map(line => textWidth(line.text)));
         const lineH = noteSize + 6;
         const h = lines.length * lineH + 14;
-        const dirs = [[0, -1], [0, 1], [-1, -0.4], [1, -0.4], [-1, 0.4], [1, 0.4], [-1, -1], [1, -1], [-1, 1], [1, 1], [-1, 0], [1, 0]];
+        const dirs = [[0, -1], [0, 1], [-1, -0.55], [1, -0.55], [-1, 0.55], [1, 0.55], [-1, -1], [1, -1], [-1, 1], [1, 1], [-1, 0], [1, 0]];
         const cands = [];
-        [24, 46, 72, 102, 136, 172].forEach(g => {
+        [88, 130, 176, 230, 290].forEach(g => {
           dirs.forEach(([dx, dy]) => {
             const len = Math.hypot(dx, dy);
             cands.push({ x: anchor.x + dx / len * g - w / 2, y: anchor.y + dy / len * g - h / 2 });
           });
         });
-        cands.push({ x: padL + 8, y: padT + 8 }, { x: W - padR - w - 8, y: padT + 8 });
-        cands.push({ x: padL + 8, y: H - padB - h - 8 }, { x: W - padR - w - 8, y: H - padB - h - 8 });
-        let best = { x: padL + 8, y: padT + 8, w, h };
+        cands.push({ x: padL + 10, y: padT + 10 }, { x: W - padR - w - 10, y: padT + 10 });
+        cands.push({ x: padL + 10, y: H - padB - h - 10 }, { x: W - padR - w - 10, y: H - padB - h - 10 });
+        cands.push({ x: padL + (plotW - w) / 2, y: padT + 10 });
+        cands.push({ x: padL + (plotW - w) / 2, y: H - padB - h - 10 });
+        let best = { x: padL + 10, y: padT + 10, w, h };
         let bestScore = Infinity;
         cands.forEach(c => {
           const b = { x: c.x, y: c.y, w, h };
+          const dist = Math.hypot(b.x + w / 2 - anchor.x, b.y + h / 2 - anchor.y);
           let score = inBounds(b) ? 0 : 100000;
-          occupied.forEach(o => { if (overlaps(b, o, 8)) score += 90000; });
-          score += samplesHit(b, 8) * 7000;
+          occupied.forEach(o => { if (overlaps(b, o, 16)) score += 90000; });
+          score += samplesHit(b, 22) * 14000;
           const tip = edgePoint(anchor, b);
           occupied.forEach(o => {
             if (o.w > 30 && segHitsBox(anchor.x, anchor.y, tip.x, tip.y, o)) score += 40000;
           });
-          score += Math.hypot(b.x + w / 2 - anchor.x, b.y + h / 2 - anchor.y) * 0.22;
+          score += Math.max(0, 150 - dist) * 18;
           if (score < bestScore) { bestScore = score; best = b; }
         });
         occupied.push(best);
